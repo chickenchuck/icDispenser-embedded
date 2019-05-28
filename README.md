@@ -12,21 +12,21 @@ All functionality is run through interrupts; the main loop does nothing.
 
 [Platformio](https://github.com/platformio/platformio-core) is used for development.
 
-###IO Devices
+### IO Devices
 - Serial communication with master device (probably Raspberry Pi)
 - Stepper driver for selector motor
 - Stepper driver for dispenser motor
 - IR sensor (beam/break) for index positioning
 - Limit switch for dispenser homing
 
-###Processor peripherals used
+### Processor peripherals used
 - TIMER0: for timing selector motor pulses
 - TIMER2: for timing dispenser motor pulses
 - INT0 (interrupt 0): connected to dispenser limit switch for knowing when to stop homing dispenser
 - INT1 (interrupt 1): connected to selector limit switch for keeping track of its position
 - USART0 - serial communications with master device
 
-###Serial commands
+### Serial commands
 - ENABLE: enables selector motor (hold position)
 - DISABLE: disables selector motor (moves freely)
 - HOME: homes the selector motor so it is at index 0
