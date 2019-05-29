@@ -40,6 +40,17 @@
 
 #define HOME_POS_COUNT_THRESHOLD 700 //number of microsteps for the threshold how long a switch is pressed for homing
 
+#define TWI_START 0x08
+#define TWI_REPEATED_START 0x10
+#define TWI_MT_SLA_ACK 0x18
+#define TWI_MT_DATA_ACK 0x28
+#define TWI_MR_SLA_ACK 0x40
+#define TWI_MR_DATA_ACK 0x50
+#define TWI_MR_DATA_NACK 0x58
+
+unsigned char TWI_SLA_W = 0xD0; //b1101000_0 //MPU6050 address and 0 for WRITE
+unsigned char TWI_SLA_R = 0xD1; //b1101000_1 //MPU6050 address and 1 for READ
+
 char state = 0; //0 is disabled, 1 is hold, 2 is moving
 char index = 0;
 char dIndex = 0; //destination index
@@ -583,6 +594,104 @@ ISR(TIMER2_OVF_vect)
     }
 }
 
+void TWI_stop()
+{
+    TWCR = (1 << TWINT) | (1 << TWSTO) | (1 << TWEN); //reset TWINT, enable TWI, enable stop condition
+    //printf("stop: TWCR=%x, TWSR=%x\n", TWCR, TWSR);
+}
+
+void TWI_start()
+{
+    //send START condition
+    TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN); //reset TWINT, set TWSTA, enable TWI
+
+    while(!(TWCR & (1 << TWINT))){} //loop until TWINT is set
+
+    //printf("start: TWCR=%x, TWSR=%x\n", TWCR, TWSR);
+    if((TWSR & 0xF8) != TWI_START && (TWSR & 0xF8) != TWI_REPEATED_START) //AND TWSR with a mask to only check most significant 5 bits of TWSR and compare to ensure start happened
+    {
+        printf("I2C error: start condition not sent\n");
+    }
+}
+
+void TWI_write_init()
+{
+    TWDR = TWI_SLA_W; //write slave address and wrtie bit to TWDR for transmission
+    TWCR = (1 << TWINT) | (1 << TWEN); //reset TWINT and enable TWI
+
+    while(!(TWCR & (1 << TWINT))){} //loop until TWINT is set
+
+    //printf("write_address: TWCR=%x, TWSR=%x\n", TWCR, TWSR);
+    if((TWSR & 0xF8) != TWI_MT_SLA_ACK) //AND TWSR with a mask to only check most significant 5 bits of TWSR and compare to ensure ACK was received
+    {
+        printf("I2C error: ACK not received when sending write address\n");
+    }
+}
+
+void TWI_write_data(unsigned char data)
+{
+    //char numBytes = sizeof(bytes) / sizeof(bytes[0]);
+    //for(char i = 0; i < numBytes; i++)
+
+    TWDR = data; //set TWDR to data byte
+    TWCR = (1 << TWINT) | (1 << TWEN); //reset TWINT, enable TWI
+
+    while(!(TWCR & (1 << TWINT))){} //loop until TWINT is set
+
+    //printf("write_data: TWCR=%x, TWSR=%x\n", TWCR, TWSR);
+    if((TWSR & 0xF8) != TWI_MT_DATA_ACK) //AND TWSR with a mask to only check most significant 5 bits of TWSR and compare to ensure ACK was received
+    {
+        printf("I2C error: ACK not received when sending data\n");
+    }
+    else
+    {
+        //printf("data transmission successful\n");
+    }
+}
+
+void TWI_read_init()
+{
+    TWDR = TWI_SLA_R; //write slave address and read bit to TWDR for transmission
+    TWCR = (1 << TWINT) | (1 << TWEN); //reset TWINT, enable TWI
+
+    while(!(TWCR & (1 << TWINT))){} //loop until TWINT is set
+
+    //printf("read_address: TWCR=%x, TWSR=%x\n", TWCR, TWSR);
+    if((TWSR & 0xF8) != TWI_MR_SLA_ACK) //AND TWSR with a mask to only check most significant 5 bits of TWSR and compare to ensure ACK was received
+    {
+        printf("I2C error: ACK not received when sending receive address\n");
+    }
+}
+
+unsigned char TWI_read_data()
+{
+    TWCR = (1 << TWINT) | /*(1 << TWEA) | */(1 << TWEN); //reset TWINT, enable TWI, send NACK
+
+    while(!(TWCR & (1 << TWINT))){} //loop until TWINT is set
+
+    unsigned char data = TWDR; //get data from TWDR
+
+    printf("read_data: TWCR=%x, TWSR=%x, TWDR=%x\n", TWCR, TWSR, TWDR);
+    if((TWSR & 0xF8) != TWI_MR_DATA_NACK) //AND TWSR with a mask to only check most significant 5 bits of TWSR and compare to ensure NACK was sent
+    {
+        printf("I2C error: ACK not sent when receiving data\n");
+    }
+
+    return data;
+}
+
+void get_accel_data()
+{
+    TWI_start();
+    TWI_write_init();
+    TWI_write_data(68);
+    TWI_start();
+    TWI_read_init();
+    unsigned char accel_data = TWI_read_data();
+    TWI_stop();
+    printf("ACCEL: %i\n", accel_data);
+}
+
 int main()
 {
     //PIN INIT
@@ -664,12 +773,18 @@ int main()
     //direct stdout to the serial output 
     stdout = &uart_output;
 
+    
+    //TWI INIT
+    
+    //set bit rate register to 72, corresponding to 100kHz
+    TWBR = 72;
 
     //turn on interrupts
     sei();
 
+    //get_accel_data();
 
-    while(1){}
+    while(1){get_accel_data();}
 
     return 0;
 }
