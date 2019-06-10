@@ -86,11 +86,13 @@ volatile char charCount = 0; //for keeping track of how many characters have bee
 */
 void uart_putchar(char c, FILE *stream)
 {
+    PORTC |= (1 << PC0); //turn on status LED
     if(c == '\n')
         uart_putchar('\r', stream);
 
     loop_until_bit_is_set(UCSR0A, UDRE0);
     UDR0 = c;
+    PORTC &= ~(1 << PC0); //turn on status LED
 }
 
 /*
@@ -545,8 +547,10 @@ ISR(INT0_vect)
  */
 ISR(USART_RX_vect)
 {
+    PORTC |= (1 << PC0); //turn on status LED
     volatile char receivedChar = UDR0; //serial buffer register
     parseCommand(receivedChar);
+    PORTC &= ~(1 << PC0); //turn off status LED
 }
 
 /*
@@ -705,6 +709,7 @@ int main()
     DDRB |= 1 << DDB0; //sm1 dir - PB0 - output
     DDRB |= 1 << DDB1; //sm2 dir - PB1 - output
     DDRB |= 1 << DDB3; //sm2 step - PB3 - output (OCR2A)
+    DDRC |= 1 << DDC0; //serial status led - PC0 - output
 
     //STEPPER/TIMER INIT
     
@@ -784,7 +789,7 @@ int main()
 
     //get_accel_data();
 
-    while(1){get_accel_data();}
+    while(1){/*get_accel_data();*/}
 
     return 0;
 }
