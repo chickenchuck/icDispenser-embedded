@@ -55,29 +55,29 @@
 #define MPU6050_SAMPLE_RATE 0x07 //1 KHz
 #define MPU6050_ACCEL_XOUT_H 0x3B
 #define MPU6050_ACCEL_XOUT_L 0x3C
-unsigned char TWI_SLA_W = 0xD0; //b1101000_0 //MPU6050 address and 0 for WRITE
-unsigned char TWI_SLA_R = 0xD1; //b1101000_1 //MPU6050 address and 1 for READ
+#define TWI_SLA_W 0xD0; //b1101000_0 //MPU6050 address and 0 for WRITE
+#define TWI_SLA_R 0xD1; //b1101000_1 //MPU6050 address and 1 for READ
 
-char state = 0; //0 is disabled, 1 is hold, 2 is moving
-char index = 0;
-char dIndex = 0; //destination index
-char maxIndex = 4; // total tubes - 1
-char moveOneMode = 0;
-char hasFound = 0;
+uint8_t state = 0; //0 is disabled, 1 is hold, 2 is moving
+uint8_t index = 0;
+uint8_t dIndex = 0; //destination index
+uint8_t maxIndex = 4; // total tubes - 1
+uint8_t moveOneMode = 0;
+uint8_t hasFound = 0;
 
-char isHoming = 0;
-char hasFoundHome = 0;
-char isFirstHome = 1;
-char homeBeforeNextMove = 0;
-char homeFoundEdge = 0;
+uint8_t isHoming = 0;
+uint8_t hasFoundHome = 0;
+uint8_t isFirstHome = 1;
+uint8_t homeBeforeNextMove = 0;
+uint8_t homeFoundEdge = 0;
 
-char isPosCount = 0;
-int posCountPos = 0;
+uint8_t isPosCount = 0;
+uint32_t posCountPos = 0;
 
-char dispenserState = 0;
-char isDispense = 0;
-char isDispenserHoming = 0;
-char isTestingDispenser = 0;
+uint8_t dispenserState = 0;
+uint8_t isDispense = 0;
+uint8_t isDispenserHoming = 0;
+uint8_t isTestingDispenser = 0;
 unsigned long dispensePos = 0UL;
 unsigned long destinationPos = 0UL;
 unsigned long stepsPerMM = 320UL; //613
@@ -113,7 +113,7 @@ void uart_putchar(char c, FILE *stream)
  * Always returns 2, which is the new state of the motor (moving)
  *
  */
-char moveStepper(unsigned char speed, char dir)
+uint8_t moveStepper(uint8_t speed, uint8_t dir)
 {
     //set enable pin to low
     PORTD &= ~(1 << PD7);
@@ -145,7 +145,7 @@ char moveStepper(unsigned char speed, char dir)
  * Always returns 2, which is the new state of the motor (moving)
  *
  */
-char moveDispenserStepper(unsigned char speed, char dir)
+uint8_t moveDispenserStepper(uint8_t speed, uint8_t dir)
 {
     //set enable pin to low
     PORTD &= ~(1 << PD4);
@@ -171,7 +171,7 @@ char moveDispenserStepper(unsigned char speed, char dir)
  * Enables and stops selector motor; it will hold its position
  * Always returns 1, the new state of the motor (hold)
  */
-char holdStepper()
+uint8_t holdStepper()
 {
     //set enable pin to low
     PORTD &= ~(1 << PD7);
@@ -188,7 +188,7 @@ char holdStepper()
  * Enables and stops dispenser motor; it will hold its position
  * Always returns 1, the new state of the motor (hold)
  */
-char holdDispenserStepper()
+uint8_t holdDispenserStepper()
 {
     //set enable pin to low
     PORTD &= ~(1 << PD4);
@@ -204,7 +204,7 @@ char holdDispenserStepper()
 /* Disables and stops selector motor; it will be free to move
  * Always returns 0, the new state of the motor (disabled)
  */
-char disableStepper()
+uint8_t disableStepper()
 {
     //set enable pin to high
     PORTD |= (1 << PD7);
@@ -220,7 +220,7 @@ char disableStepper()
 /* Disables and stops dispenser motor; it will be free to move
  * Always returns 0, the new state of the motor (disabled)
  */
-char disableDispenserStepper()
+uint8_t disableDispenserStepper()
 {
     //set enable pin to high
     PORTD |= (1 << PD4);
@@ -248,7 +248,7 @@ void homeInit()
  * Initializes a move to position operation. Checks to see if it must home beforehand due to the index changing arbitrarily (ir sensor detection)
  * pos - index to move to
  */
-void moveToPosInit(unsigned char pos)
+void moveToPosInit(uint8_t pos)
 {
     dIndex = pos;
     hasFound = 0;
@@ -283,7 +283,7 @@ void moveToPosInit(unsigned char pos)
  * Sets the maximum index
  * maxItems - max number of tubes
  */
-void setMaxIndex(unsigned char maxItems)
+void setMaxIndex(uint8_t maxItems)
 {
     maxIndex = maxItems - 1;
     printf("total items %d\n", maxItems);
@@ -623,9 +623,7 @@ void TWI_start()
 
     //printf("start: TWCR=%x, TWSR=%x\n", TWCR, TWSR);
     if((TWSR & 0xF8) != TWI_START && (TWSR & 0xF8) != TWI_REPEATED_START) //AND TWSR with a mask to only check most significant 5 bits of TWSR and compare to ensure start happened
-    {
         printf("I2C error: start condition not sent\n");
-    }
 }
 
 void TWI_write_init()
@@ -637,16 +635,11 @@ void TWI_write_init()
 
     //printf("write_address: TWCR=%x, TWSR=%x\n", TWCR, TWSR);
     if((TWSR & 0xF8) != TWI_MT_SLA_ACK) //AND TWSR with a mask to only check most significant 5 bits of TWSR and compare to ensure ACK was received
-    {
         printf("I2C error: ACK not received when sending write address\n");
-    }
 }
 
-void TWI_write_data(unsigned char data)
+void TWI_write_data(uint8_t data)
 {
-    //char numBytes = sizeof(bytes) / sizeof(bytes[0]);
-    //for(char i = 0; i < numBytes; i++)
-
     TWDR = data; //set TWDR to data byte
     TWCR = (1 << TWINT) | (1 << TWEN); //reset TWINT, enable TWI
 
@@ -654,13 +647,7 @@ void TWI_write_data(unsigned char data)
 
     //printf("write_data: TWCR=%x, TWSR=%x\n", TWCR, TWSR);
     if((TWSR & 0xF8) != TWI_MT_DATA_ACK) //AND TWSR with a mask to only check most significant 5 bits of TWSR and compare to ensure ACK was received
-    {
         printf("I2C error: ACK not received when sending data\n");
-    }
-    else
-    {
-        //printf("data transmission successful\n");
-    }
 }
 
 void TWI_read_init()
@@ -672,24 +659,16 @@ void TWI_read_init()
 
     //printf("read_address: TWCR=%x, TWSR=%x\n", TWCR, TWSR);
     if((TWSR & 0xF8) != TWI_MR_SLA_ACK) //AND TWSR with a mask to only check most significant 5 bits of TWSR and compare to ensure ACK was received
-    {
         printf("I2C error: ACK not received when sending receive address\n");
-    }
 }
 
-unsigned char TWI_read_data()
+uint8_t TWI_read_data()
 {
     TWCR = (1 << TWINT) | /*(1 << TWEA) | */(1 << TWEN); //reset TWINT, enable TWI, send NACK
 
     while(!(TWCR & (1 << TWINT))){} //loop until TWINT is set
 
-    //unsigned char data = TWDR; //get data from TWDR
-
     //printf("read_data: TWCR=%x, TWSR=%x, TWDR=%x\n", TWCR, TWSR, TWDR);
-    //if((TWSR & 0xF8) != TWI_MR_DATA_NACK) //AND TWSR with a mask to only check most significant 5 bits of TWSR and compare to ensure NACK was sent
-    //{
-    //    printf("I2C error: ACK not sent when receiving data\n");
-    //}
 
     return TWDR;
 }
