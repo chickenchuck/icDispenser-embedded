@@ -40,6 +40,9 @@
 
 #define HOME_POS_COUNT_THRESHOLD 700 //number of microsteps for the threshold how long a switch is pressed for homing
 
+#define F_SCL 100000UL
+#define PRESCALER 1
+#define TWBR_val ((((F_CPU / F_SCL) / PRESCALER) - 16) / 2)
 #define TWI_START 0x08
 #define TWI_REPEATED_START 0x10
 #define TWI_MT_SLA_ACK 0x18
@@ -47,7 +50,11 @@
 #define TWI_MR_SLA_ACK 0x40
 #define TWI_MR_DATA_ACK 0x50
 #define TWI_MR_DATA_NACK 0x58
-
+#define MPU6050_PWR_MGMT_1 0x6B
+#define MPU6050_SMPLRT_DIV 0x19
+#define MPU6050_SAMPLE_RATE 0x07 //1 KHz
+#define MPU6050_ACCEL_XOUT_H 0x3B
+#define MPU6050_ACCEL_XOUT_L 0x3C
 unsigned char TWI_SLA_W = 0xD0; //b1101000_0 //MPU6050 address and 0 for WRITE
 unsigned char TWI_SLA_R = 0xD1; //b1101000_1 //MPU6050 address and 1 for READ
 
@@ -606,6 +613,9 @@ void TWI_stop()
 
 void TWI_start()
 {
+    //reset control register
+    TWCR = 0;
+
     //send START condition
     TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN); //reset TWINT, set TWSTA, enable TWI
 
@@ -673,25 +683,33 @@ unsigned char TWI_read_data()
 
     while(!(TWCR & (1 << TWINT))){} //loop until TWINT is set
 
-    unsigned char data = TWDR; //get data from TWDR
+    //unsigned char data = TWDR; //get data from TWDR
 
-    printf("read_data: TWCR=%x, TWSR=%x, TWDR=%x\n", TWCR, TWSR, TWDR);
-    if((TWSR & 0xF8) != TWI_MR_DATA_NACK) //AND TWSR with a mask to only check most significant 5 bits of TWSR and compare to ensure NACK was sent
-    {
-        printf("I2C error: ACK not sent when receiving data\n");
-    }
+    //printf("read_data: TWCR=%x, TWSR=%x, TWDR=%x\n", TWCR, TWSR, TWDR);
+    //if((TWSR & 0xF8) != TWI_MR_DATA_NACK) //AND TWSR with a mask to only check most significant 5 bits of TWSR and compare to ensure NACK was sent
+    //{
+    //    printf("I2C error: ACK not sent when receiving data\n");
+    //}
 
-    return data;
+    return TWDR;
 }
 
 void get_accel_data()
 {
     TWI_start();
     TWI_write_init();
-    TWI_write_data(68);
+    TWI_write_data(MPU6050_PWR_MGMT_1);
+    TWI_write_data(0x01);
+    TWI_stop();
+
+    TWI_start();
+    TWI_write_init();
+    TWI_write_data(MPU6050_ACCEL_XOUT_H);
+    //TWI_write_data(0x75);
     TWI_start();
     TWI_read_init();
-    unsigned char accel_data = TWI_read_data();
+    uint16_t accel_data = TWI_read_data() << 8;
+    accel_data |= TWI_read_data();
     TWI_stop();
     printf("ACCEL: %i\n", accel_data);
 }
@@ -781,15 +799,13 @@ int main()
     
     //TWI INIT
     
-    //set bit rate register to 72, corresponding to 100kHz
-    TWBR = 72;
+    //set bit rate register corresponding to 100kHz
+    TWBR = (uint8_t)TWBR_val;
 
     //turn on interrupts
     sei();
 
-    //get_accel_data();
-
-    while(1){/*get_accel_data();*/}
+    while(1){get_accel_data();}
 
     return 0;
 }
