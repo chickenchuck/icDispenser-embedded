@@ -9,6 +9,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/setbaud.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 #define ARG_LENGTH 3 //length (number of characters) of command arguments
@@ -58,6 +59,8 @@
 #define TWI_SLA_W 0xD0; //b1101000_0 //MPU6050 address and 0 for WRITE
 #define TWI_SLA_R 0xD1; //b1101000_1 //MPU6050 address and 1 for READ
 
+#define ACCEL_DIFF 5000
+
 uint8_t state = 0; //0 is disabled, 1 is hold, 2 is moving
 uint8_t index = 0;
 uint8_t dIndex = 0; //destination index
@@ -79,9 +82,9 @@ uint8_t isDispense = 0;
 uint8_t isDispenserHoming = 0;
 uint8_t isTestingDispenser = 0;
 unsigned long dispensePos = 0UL;
-unsigned long destinationPos = 0UL;
-unsigned long stepsPerMM = 320UL; //613
-unsigned long mmOffset = 41UL; //offset distance in mm between dispenser limit switch and edge of tube
+//unsigned long destinationPos = 0UL;
+//unsigned long stepsPerMM = 320UL; //613
+unsigned long mmOffset = 35UL; //41 offset distance in mm between dispenser limit switch and edge of tube
 
 volatile char command[ARG_LENGTH+1]; //stores characters for commands that require an argument
 volatile char charCount = 0; //for keeping track of how many characters have been sent and are stored in the command array
@@ -306,10 +309,11 @@ void moveOne()
  */
 void dispenseInit(unsigned long mm)
 {
-    destinationPos = (mm + mmOffset) * stepsPerMM; //mmOfset is the distance between the limit switch and the start of the tube
+    //destinationPos = (mm + mmOffset) * stepsPerMM; //mmOfset is the distance between the limit switch and the start of the tube
     dispensePos = 0;
     isDispense = 1;
-    printf("dispense %lumm %lusteps\n", mm, destinationPos);
+    //printf("dispense %lumm %lusteps\n", mm, destinationPos);
+    printf("dispense start\n");
     dispenserState = moveDispenserStepper(DISPENSE_SPEED, DISPENSE_DIR);
 }
 
@@ -321,6 +325,20 @@ void homeDispenserInit()
     isDispenserHoming = 1;
     dispenserState = moveDispenserStepper(DISPENSE_HOME_SPEED, DISPENSE_HOME_DIR);
     printf("dispenser homing\n");
+}
+
+void dispense_done()
+{
+    dispenserState = disableDispenserStepper();
+    isDispense = 0;
+    printf("done dispensing\n");
+
+    if(isTestingDispenser == 0)
+    {
+        homeDispenserInit();
+    }
+
+    isTestingDispenser = 0;
 }
 
 /* 
@@ -589,18 +607,9 @@ ISR(TIMER2_OVF_vect)
     {
         dispensePos++;
 
-        if(dispensePos == destinationPos)
+        if(dispensePos == mmOffset)
         {
-            dispenserState = disableDispenserStepper();
-            isDispense = 0;
-            printf("done dispensing\n");
-
-            if(isTestingDispenser == 0)
-            {
-                homeDispenserInit();
-            }
-
-            isTestingDispenser = 0;
+            compare_accel_data();
         }
     }
 }
@@ -673,14 +682,17 @@ uint8_t TWI_read_data()
     return TWDR;
 }
 
-void get_accel_data()
+void accel_init()
 {
     TWI_start();
     TWI_write_init();
     TWI_write_data(MPU6050_PWR_MGMT_1);
     TWI_write_data(0x01);
     TWI_stop();
+}
 
+uint16_t get_accel_data()
+{
     TWI_start();
     TWI_write_init();
     TWI_write_data(MPU6050_ACCEL_XOUT_H);
@@ -690,7 +702,23 @@ void get_accel_data()
     uint16_t accel_data = TWI_read_data() << 8;
     accel_data |= TWI_read_data();
     TWI_stop();
-    printf("ACCEL: %i\n", accel_data);
+    //printf("ACCEL: %i\n", accel_data);
+    return accel_data;
+}
+
+void compare_accel_data()
+{
+    uint16_t data = get_accel_data();
+    uint16_t last_data = data;
+
+    while(abs(data - last_data) < ACCEL_DIFF)
+    {
+        last_data = data;
+        data = get_accel_data();
+        printf("%d\n", data);
+    }
+
+    dispense_done();
 }
 
 int main()
@@ -781,10 +809,12 @@ int main()
     //set bit rate register corresponding to 100kHz
     TWBR = (uint8_t)TWBR_val;
 
+    accel_init();
+
     //turn on interrupts
     sei();
 
-    while(1){get_accel_data();}
+    while(1){}
 
     return 0;
 }
