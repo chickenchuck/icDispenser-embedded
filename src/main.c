@@ -316,6 +316,7 @@ void dispenseInit(unsigned long mm)
     //printf("dispense %lumm %lusteps\n", mm, destinationPos);
     printf("dispense start\n");
     dispenserState = moveDispenserStepper(DISPENSE_SPEED, DISPENSE_DIR);
+    compare_accel_data();
 }
 
 /*
@@ -330,13 +331,16 @@ void homeDispenserInit()
         printf("dispenser homing\n");
     }
     else
+    {
         printf("dispenser already homed\n");
+    }
 }
 
 void dispense_done()
 {
     dispenserState = disableDispenserStepper();
     isDispense = 0;
+    isDispenserHomed = 0;
     printf("done dispensing\n");
 
     if(isTestingDispenser == 0)
@@ -578,6 +582,7 @@ ISR(INT0_vect)
     else //pin is low = falling edge of signal = switch is pressed
     {
         isDispenserHomed = 0;
+        printf("wer\n");
     }
 }
 
@@ -615,7 +620,7 @@ ISR(TIMER0_OVF_vect)
  * time TIMER2 overflows, indicated the motor moved one microstep. Microsteps are counted until the destination
  * position is reached.
  */
-ISR(TIMER2_OVF_vect)
+/*ISR(TIMER2_OVF_vect)
 {
     if(isDispense == 1)
     {
@@ -626,7 +631,7 @@ ISR(TIMER2_OVF_vect)
             compare_accel_data();
         }
     }
-}
+}*/
 
 void TWI_stop()
 {
@@ -772,7 +777,7 @@ int main()
 
     //enable overflow interrupt
     TIMSK0 |= (1 << TOIE0);
-    TIMSK2 |= (1 << TOIE2);
+    //TIMSK2 |= (1 << TOIE2);
 
 
     //EXTERNAL INTERRUPT INIT
@@ -833,7 +838,7 @@ int main()
         isDispenserHomed = 1;
 
     printf("%i\n", isDispenserHomed);
-    while(1){/*printf("%i\n", PIND & (1 << PD2));*/}
+    while(1){/*printf("%i\n", isDispenserHomed);*/}
 
     return 0;
 }
