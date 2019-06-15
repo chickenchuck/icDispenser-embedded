@@ -80,6 +80,7 @@ uint32_t posCountPos = 0;
 uint8_t dispenserState = 0;
 uint8_t isDispense = 0;
 uint8_t isDispenserHoming = 0;
+uint8_t isDispenserHomed = 0;
 uint8_t isTestingDispenser = 0;
 unsigned long dispensePos = 0UL;
 //unsigned long destinationPos = 0UL;
@@ -322,9 +323,14 @@ void dispenseInit(unsigned long mm)
  */
 void homeDispenserInit()
 {
-    isDispenserHoming = 1;
-    dispenserState = moveDispenserStepper(DISPENSE_HOME_SPEED, DISPENSE_HOME_DIR);
-    printf("dispenser homing\n");
+    if(isDispenserHomed == 0)
+    {
+        isDispenserHoming = 1;
+        dispenserState = moveDispenserStepper(DISPENSE_HOME_SPEED, DISPENSE_HOME_DIR);
+        printf("dispenser homing\n");
+    }
+    else
+        printf("dispenser already homed\n");
 }
 
 void dispense_done()
@@ -563,6 +569,7 @@ ISR(INT0_vect)
         dispenserState = disableDispenserStepper();
         state = disableStepper();
         isDispenserHoming = 0;
+        isDispenserHomed = 1;
         printf("done homing dispenser\n");
     }
 }
@@ -609,6 +616,7 @@ ISR(TIMER2_OVF_vect)
 
         if(dispensePos == mmOffset)
         {
+            isDispenserHomed = 0;
             compare_accel_data();
         }
     }
@@ -814,7 +822,12 @@ int main()
     //turn on interrupts
     sei();
 
-    while(1){}
+    //determine if dispenser is homed by checking limit switch
+    if(PIND & (1 << PD2)) //PD2 is high = button is not pressed (pin is pulled up)
+        isDispenserHomed = 1;
+
+    printf("%i\n", isDispenserHomed);
+    while(1){/*printf("%i\n", PIND & (1 << PD2));*/}
 
     return 0;
 }
