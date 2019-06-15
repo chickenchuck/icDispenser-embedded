@@ -564,13 +564,20 @@ ISR(INT1_vect)
  */
 ISR(INT0_vect)
 {
-    if(isDispenserHoming == 1)
+    if(PIND & (1 << PD2)) //pin is high = rising edge of signal = switch is unpressed
     {
-        dispenserState = disableDispenserStepper();
-        state = disableStepper();
-        isDispenserHoming = 0;
-        isDispenserHomed = 1;
-        printf("done homing dispenser\n");
+        if(isDispenserHoming == 1)
+        {
+            dispenserState = disableDispenserStepper();
+            state = disableStepper();
+            isDispenserHoming = 0;
+            isDispenserHomed = 1;
+            printf("done homing dispenser\n");
+        }
+    }
+    else //pin is low = falling edge of signal = switch is pressed
+    {
+        isDispenserHomed = 0;
     }
 }
 
@@ -616,7 +623,6 @@ ISR(TIMER2_OVF_vect)
 
         if(dispensePos == mmOffset)
         {
-            isDispenserHomed = 0;
             compare_accel_data();
         }
     }
