@@ -1,5 +1,4 @@
 #include "steppers.h"
-#include <avr/io.h>
 
 //motor states: 0=disabled, 1=hold, 2=moving
 uint8_t steppers_sel_state = 0;
@@ -13,7 +12,7 @@ void steppers_init()
     DDRD |= STEPPERS_SEL_STEP_PIN;
     DDRD |= STEPPERS_DIS_EN_PIN;
     DDRB |= STEPPERS_DIS_DIR_PIN;
-    DDBD |= STEPPERS_DIS_STEP_PIN;
+    DDRB |= STEPPERS_DIS_STEP_PIN;
 
     //disable both motors by setting enables to high
     PORTD |= STEPPERS_SEL_EN_PIN;
