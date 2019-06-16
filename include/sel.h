@@ -4,7 +4,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 #define SEL_IR_PIN (1 << PD3) //INT1
 #define SEL_MOVE_SPEED 165
