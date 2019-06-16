@@ -21,6 +21,12 @@ void dis_limit_switch_init()
 
     //enable INT0
     EIMSK |= (1 << INT0);
+
+    //initially determine if dispenser is homed by checking limit switch
+    if(PIND & DIS_LIMIT_SWITCH_PIN) //pin is high = button is not pressed (pin is pulled up)
+        is_dis_homed = 1;
+    else
+        is_dis_homed = 0;
 }
 
 /*
