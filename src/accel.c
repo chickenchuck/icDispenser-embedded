@@ -12,7 +12,7 @@ void accel_init()
     accel_TWI_stop();
 }
 
-void accel_TWI_start()
+static void accel_TWI_start()
 {
     //reset control register
     TWCR = 0;
@@ -26,13 +26,13 @@ void accel_TWI_start()
         printf("I2C error: start condition not sent\n");
 }
 
-void accel_TWI_stop()
+static void accel_TWI_stop()
 {
     //send STOP condition
     TWCR = (1 << TWINT) | (1 << TWSTO) | (1 << TWEN);
 }
 
-void accel_TWI_write_init()
+static void accel_TWI_write_init()
 {
     TWDR = ACCEL_TWI_SLA_W; //write slave address and wrtie bit to TWDR for transmission
     TWCR = (1 << TWINT) | (1 << TWEN); //reset TWINT and enable TWI
@@ -43,7 +43,7 @@ void accel_TWI_write_init()
         printf("I2C error: ACK not received when sending write address\n");
 }
 
-void accel_TWI_write_data(uint8_t data)
+static void accel_TWI_write_data(uint8_t data)
 {
     TWDR = data; //set TWDR to data byte
     TWCR = (1 << TWINT) | (1 << TWEN); //reset TWINT, enable TWI
@@ -54,7 +54,7 @@ void accel_TWI_write_data(uint8_t data)
         printf("I2C error: ACK not received when sending data\n");
 }
 
-void accel_TWI_read_init()
+static void accel_TWI_read_init()
 {
     TWDR = ACCEL_TWI_SLA_R; //write slave address and read bit to TWDR for transmission
     TWCR = (1 << TWINT) | (1 << TWEN); //reset TWINT, enable TWI
@@ -65,7 +65,7 @@ void accel_TWI_read_init()
         printf("I2C error: ACK not received when sending receive address\n");
 }
 
-uint8_t accel_TWI_read_data()
+static uint8_t accel_TWI_read_data()
 {
     TWCR = (1 << TWINT) | /*(1 << TWEA) | */(1 << TWEN); //reset TWINT, enable TWI, send NACK
 
