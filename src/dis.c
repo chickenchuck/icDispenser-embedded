@@ -35,6 +35,12 @@ void dis_dispense_init(uint8_t num_items)
     dis_compare_accel_data();
 }
 
+void dis_dispense_no_home_init(uint8_t num_items)
+{
+    is_dispense_no_home = 1;
+    dis_dispense_init(num_items);
+}
+
 /*
  * Initializes a dispenser homing operation
  */

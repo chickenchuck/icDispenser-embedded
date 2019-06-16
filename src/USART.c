@@ -1,5 +1,7 @@
 #include "USART.h"
 #include "steppers.h"
+#include "sel.h"
+#include "dis.h"
 
 volatile char command[USART_ARG_LENGTH+1]; //stores characters for commands that require an argument
 volatile char char_count = 0; //for keeping track of how many characters have been sent and are stored in the command array
@@ -75,7 +77,7 @@ static void USART_parse_command(char input_char)
     }
     else if(input_char == USART_HOME_SEL_COMMAND)
     {
-        //homeInit();
+        sel_home_init();
         char_count = 0;
     }
     else if(input_char == USART_ENABLE_SEL_COMMAND)
@@ -92,12 +94,12 @@ static void USART_parse_command(char input_char)
     }
     else if(input_char == USART_MOVE_SEL_NEXT_COMMAND)
     {
-        //moveOne();
+        sel_move_next_init();
         char_count = 0;
     }
     else if(input_char == USART_HOME_DIS_COMMAND)
     {
-        //homeDispenserInit();
+        dis_home_init();
         char_count = 0;
     }
     else if(input_char == USART_ENABLE_DIS_COMMAND)
@@ -126,22 +128,13 @@ static void USART_parse_command(char input_char)
 
             //do things based on the first letter (non-argument) of the command
             if(command[0] == USART_MOVE_SEL_COMMAND)
-            {
-                //moveToPosInit(arg_value);
-            }
+                sel_move_init(arg_value);
             if(command[0] == USART_TOTAL_TUBES_COMMAND)
-            {
-                //setMaxIndex(arg_value);
-            }
+                sel_set_max_index(arg_value);
             if(command[0] == USART_DISPENSE_COMMAND)
-            {
-                //dispenseInit(arg_value);
-            }
+                dis_dispense_init(arg_value);
             if(command[0] == USART_DISPENSE_NO_HOME_COMMAND)
-            {
-                //isTestingDispenser = 1;
-                //dispenseInit(arg_value);
-            }
+                dis_dispense_no_home_init(arg_value);
 
             char_count = 0;
         }
