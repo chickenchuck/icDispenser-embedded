@@ -1,0 +1,7 @@
+#ifndef GLOBAL_DEFINITIONS_H
+#define GLOBAL_DEFINITIONS_H
+
+#define F_CPU 16000000UL
+
+#endif
+
