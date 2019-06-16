@@ -43,7 +43,7 @@ void USART_init()
  * After pushing a char, it waits for the char to leave the buffer (reg UDR0) by reading the UCSR0A flag before
  * sending the next one.
 */
-void USART_putchar(char c, FILE *stream)
+static void USART_putchar(char c, FILE *stream)
 {
     PORTC |= USART_LED_PIN;
 
@@ -64,7 +64,7 @@ void USART_putchar(char c, FILE *stream)
  * Argumental commands use the command[] array to store characters and char_count to keep track of how many
  * characters it read. It executes the command only after a full argument is received
  */
-void USART_parse_command(char input_char)
+static void USART_parse_command(char input_char)
 {
     //check if the command is one that needs an argument
     if(input_char == USART_MOVE_SEL_COMMAND || input_char == USART_TOTAL_TUBES_COMMAND ||

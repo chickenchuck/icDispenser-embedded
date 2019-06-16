@@ -24,8 +24,9 @@
 #define USART_DISABLE_DIS_COMMAND 'S'
 #define USART_DISPENSE_NO_HOME_COMMAND 'Q'
 
-void USART_init();
+void USART_init(void);
 static void USART_putchar(char c, FILE *stream);
 static void USART_parse_command(char input_char);
 
 #endif
+
