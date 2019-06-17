@@ -1,10 +1,10 @@
 #ifndef USART_H
 #define USART_H
 
+#include "global_definitions.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdio.h>
-#include "global_definitions.h"
 
 #define BAUD 9600
 #include <util/setbaud.h>
