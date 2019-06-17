@@ -62,7 +62,7 @@ void dis_home_init()
         printf("dispenser already homed\n");
 }
 
-static void dis_compare_accel_data()
+void dis_compare_accel_data()
 {
     uint16_t data = accel_get_data();
     uint16_t last_data = data;
@@ -77,7 +77,7 @@ static void dis_compare_accel_data()
     dis_done();
 }
 
-static void dis_done()
+void dis_done()
 {
     steppers_disable_dis();
     is_dispense = 0;

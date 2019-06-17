@@ -1,9 +1,9 @@
 #ifndef ACCEL_H
 #define ACCEL_H
 
+#include "global_definitions.h"
 #include <avr/io.h>
 #include <stdio.h>
-#include "global_definitions.h"
 
 #define ACCEL_F_SCL 100000UL
 #define ACCEL_TWI_PRESCALER 1
@@ -20,12 +20,12 @@
 #define ACCEL_MPU6050_ACCEL_XOUT_L 0x3C
 
 void accel_init(void);
-static void accel_TWI_start(void);
-static void accel_TWI_stop(void);
-static void accel_TWI_write_init(void);
-static void accel_TWI_write_data(uint8_t data);
-static void accel_TWI_read_init(void);
-static uint8_t accel_TWI_read_data(void);
+void accel_TWI_start(void);
+void accel_TWI_stop(void);
+void accel_TWI_write_init(void);
+void accel_TWI_write_data(uint8_t data);
+void accel_TWI_read_init(void);
+uint8_t accel_TWI_read_data(void);
 uint8_t accel_get_data(void);
 
 #endif

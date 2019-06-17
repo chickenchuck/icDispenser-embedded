@@ -15,8 +15,8 @@ void dis_limit_switch_init(void);
 void dis_dispense_init(uint8_t num_items);
 void dis_dispense_no_home_init(uint8_t num_items);
 void dis_home_init(void);
-static void dis_compare_accel_data(void);
-static void dis_done(void);
+void dis_compare_accel_data(void);
+void dis_done(void);
 
 #endif
 
