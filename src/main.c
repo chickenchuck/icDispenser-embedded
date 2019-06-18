@@ -9,6 +9,7 @@
 #include "accel.h"
 #include "sel.h"
 #include "dis.h"
+#include <stdio.h>
 
 int main()
 {
@@ -17,6 +18,10 @@ int main()
     accel_init();
     sel_ir_init();
     dis_limit_switch_init();
+
+    //setup serial output as stream and direct to stdout, has to be in main method for some reason
+    FILE usart_output = FDEV_SETUP_STREAM(USART_putchar, NULL, _FDEV_SETUP_WRITE);
+    stdout = &usart_output;
     
     sei();
     while(1){}

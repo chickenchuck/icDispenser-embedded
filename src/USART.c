@@ -32,12 +32,6 @@ void USART_init()
     UCSR0B &= ~(1 << UCSZ02);
     UCSR0C |= (1 << UCSZ01);
     UCSR0C |= (1 << UCSZ00);
-
-    //setup serial output as stream
-    FILE usart_output = FDEV_SETUP_STREAM(USART_putchar, NULL, _FDEV_SETUP_WRITE);
-
-    //direct stdout to the serial output
-    stdout = &usart_output;
 }
 
 /*
