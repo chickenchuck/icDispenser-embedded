@@ -24,6 +24,9 @@ int main()
     stdout = &usart_output;
     
     sei();
+
+    printf("IC dispenser ready\n");
+
     while(1){}
     return 0;
 }
