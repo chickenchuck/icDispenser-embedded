@@ -136,7 +136,7 @@ ISR(INT1_vect)
                 }
                 else
                 {
-                    steppers_move_sel(SEL_MOVE_SPEED, SEL_DIR); //return to fast speed
+                    steppers_move_sel(SEL_HOME_SPEED, SEL_DIR); //return to fast speed
                     printf("not home\n");
                 }
             }
@@ -157,7 +157,7 @@ ISR(INT1_vect)
             if(is_homing == 1)
             {
                 has_found_home_edge = 1;
-                steppers_move_sel(SEL_MOVE_SPEED_SLOW, SEL_DIR); //slow down
+                steppers_move_sel(SEL_HOME_SPEED_SLOW, SEL_DIR); //slow down
 
                 //reset and enable position counting
                 pos_count = 0;
