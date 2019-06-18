@@ -74,7 +74,7 @@ uint8_t accel_TWI_read_data()
     return TWDR;
 }
 
-uint8_t accel_get_data()
+uint16_t accel_get_data()
 {
     accel_TWI_start();
     accel_TWI_write_init();

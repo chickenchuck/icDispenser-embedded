@@ -26,7 +26,7 @@ void accel_TWI_write_init(void);
 void accel_TWI_write_data(uint8_t data);
 void accel_TWI_read_init(void);
 uint8_t accel_TWI_read_data(void);
-uint8_t accel_get_data(void);
+uint16_t accel_get_data(void);
 
 #endif
 
