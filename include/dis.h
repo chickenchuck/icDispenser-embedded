@@ -7,10 +7,11 @@
 #include <stdlib.h>
 
 #define DIS_LIMIT_SWITCH_PIN (1 << PD2) //INT0
-#define DIS_SPEED 30
+#define DIS_SPEED 50 //30
+#define DIS_HOME_SPEED 30
 #define DIS_DIR 0
 #define DIS_HOME_DIR 1
-#define DIS_ACCEL_DIFF_THRESHOLD 5000
+#define DIS_ACCEL_DIFF_THRESHOLD 4000
 
 void dis_limit_switch_init(void);
 void dis_dispense_init(uint8_t num_items);

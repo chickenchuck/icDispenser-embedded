@@ -60,7 +60,7 @@ void dis_home_init()
     if(is_dis_homed == 0)
     {
         is_dis_homing = 1;
-        steppers_move_dis(DIS_SPEED, DIS_HOME_DIR);
+        steppers_move_dis(DIS_HOME_SPEED, DIS_HOME_DIR);
         printf("dispenser homing\n");
     }
     else
