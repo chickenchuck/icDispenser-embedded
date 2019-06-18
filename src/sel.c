@@ -118,7 +118,7 @@ ISR(INT1_vect)
                     is_homing = 0;
                     is_pos_counting = 0;
 
-                    steppers_disable_sel();
+                    steppers_hold_sel();
                     printf("done homing\n");
 
                     if(home_before_next_move == 1)
