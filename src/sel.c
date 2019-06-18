@@ -195,7 +195,7 @@ ISR(INT1_vect)
     else if(steppers_sel_state == 0 && !(PIND & SEL_IR_PIN)) //IR sensor detection while sel stepper is disabled
     {
         home_before_next_move = 1;
-        printf("warning: IR detection while not moving, will home before next move\n");
+        printf("warning: IR detection while not moving; will home before next move\n");
     }
 }
 
