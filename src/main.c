@@ -28,5 +28,6 @@ int main()
     printf("IC dispenser ready\n");
 
     while(1){}
+    //while(1){printf("%i\n", accel_get_data());}
     return 0;
 }

@@ -35,10 +35,15 @@ void dis_limit_switch_init()
  */
 void dis_dispense_init(uint8_t num_items)
 {
-    is_dispense = 1;
-    steppers_move_dis(DIS_SPEED, DIS_DIR);
-    printf("dispense start\n");
-    dis_compare_accel_data();
+    if(PIND & DIS_LIMIT_SWITCH_PIN) //pin is high = rising edge of signal = switch is unpressed = homed
+    {
+        is_dispense = 1;
+        steppers_move_dis(DIS_SPEED, DIS_DIR);
+        printf("dispense start\n");
+        dis_compare_accel_data();
+    }
+    else //switch pressed = not homed
+        printf("error: dis not homed\n");
 }
 
 void dis_dispense_no_home_init(uint8_t num_items)
