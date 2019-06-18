@@ -4,6 +4,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define DIS_LIMIT_SWITCH_PIN (1 << PD2) //INT0
 #define DIS_SPEED 30
