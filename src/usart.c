@@ -1,4 +1,4 @@
-#include "USART.h"
+#include "usart.h"
 #include "steppers.h"
 #include "sel.h"
 #include "dis.h"
@@ -6,7 +6,7 @@
 volatile char command[USART_ARG_LENGTH+1]; //stores characters for commands that require an argument
 volatile char char_count = 0; //for keeping track of how many characters have been sent and are stored in the command array
 
-void USART_init()
+void usart_init()
 {
     //set LED pin as output
     DDRC |= USART_LED_PIN;
@@ -39,12 +39,12 @@ void USART_init()
  * After pushing a char, it waits for the char to leave the buffer (reg UDR0) by reading the UCSR0A flag before
  * sending the next one.
 */
-void USART_putchar(char c, FILE *stream)
+void usart_putchar(char c, FILE *stream)
 {
     PORTC |= USART_LED_PIN;
 
     if(c == '\n')
-        USART_putchar('\r', stream);
+        usart_putchar('\r', stream);
 
     loop_until_bit_is_set(UCSR0A, UDRE0);
     UDR0 = c;
@@ -60,7 +60,7 @@ void USART_putchar(char c, FILE *stream)
  * Argumental commands use the command[] array to store characters and char_count to keep track of how many
  * characters it read. It executes the command only after a full argument is received
  */
-void USART_parse_command(char input_char)
+void usart_parse_command(char input_char)
 {
     //check if the command is one that needs an argument
     if(input_char == USART_MOVE_SEL_COMMAND || input_char == USART_TOTAL_TUBES_COMMAND ||
@@ -141,6 +141,6 @@ void USART_parse_command(char input_char)
 ISR(USART_RX_vect)
 {
     PORTC |= USART_LED_PIN;
-    USART_parse_command(UDR0);
+    usart_parse_command(UDR0);
     PORTC &= ~USART_LED_PIN;
 }
