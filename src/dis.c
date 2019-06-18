@@ -104,14 +104,14 @@ ISR(INT0_vect)
             steppers_disable_dis();
             steppers_disable_sel();
             is_dis_homing = 0;
-            is_dis_homed = 0;
+            is_dis_homed = 1;
             printf("done homing dispenser\n");
         }
     }
     else //pin is low = falling edge of signal = switch is pressed
     {
         is_dis_homed = 0;
-        printf("wer\n");
+        //printf("wer\n");
     }
 }
 
