@@ -6,6 +6,7 @@ uint8_t is_dispense = 0;
 uint8_t is_dispense_no_home = 0;
 uint8_t is_dis_homing = 0;
 uint8_t is_dis_homed = 0;
+uint8_t items_left_to_dispense = 0;
 
 void dis_limit_switch_init()
 {
@@ -35,15 +36,18 @@ void dis_limit_switch_init()
  */
 void dis_dispense_init(uint8_t num_items)
 {
-    if(PIND & DIS_LIMIT_SWITCH_PIN) //pin is high = rising edge of signal = switch is unpressed = homed
+    if(!(PIND & DIS_LIMIT_SWITCH_PIN)) //pin is low = falling edge of signal = switch is pressed = not homed
+        printf("error: dis not homed\n");
+    else if(num_items <= 0)
+        printf("error: not a valid number of ICs\n");
+    else
     {
+        items_left_to_dispense = num_items;
         is_dispense = 1;
         steppers_move_dis(DIS_SPEED, DIS_DIR);
         printf("dispense start\n");
-        dis_compare_accel_data();
+        dis_accel_wait_for_dispense();
     }
-    else //switch pressed = not homed
-        printf("error: dis not homed\n");
 }
 
 void dis_dispense_no_home_init(uint8_t num_items)
@@ -67,24 +71,54 @@ void dis_home_init()
         printf("dispenser already homed\n");
 }
 
-void dis_compare_accel_data()
+void dis_accel_wait_for_dispense()
 {
+    uint16_t last_data = accel_get_data();
     uint16_t data = accel_get_data();
-    uint16_t last_data = data;
 
     while(abs(data - last_data) < DIS_ACCEL_DIFF_THRESHOLD)
     {
+        printf("dis_dispense: %i\n", data);
         last_data = data;
         data = accel_get_data();
-        printf("%i\n", data);
     }
 
-    dis_done();
+    steppers_disable_dis();
+    
+    items_left_to_dispense--;
+    printf("dispense, %i ICs left\n", items_left_to_dispense);
+    if(items_left_to_dispense == 0)
+        dis_done();
+    else
+        dis_accel_wait_for_stable();
+}
+
+void dis_accel_wait_for_stable()
+{
+    uint16_t last_data = accel_get_data();
+    uint16_t data = accel_get_data();
+    uint8_t stable_count = 0;
+
+    while(stable_count < DIS_ACCEL_STABLE_NUM)
+    {
+        if(abs(data - last_data) < DIS_ACCEL_STABLE_THRESHOLD)
+            stable_count++;
+        else
+            stable_count = 0;
+        
+        printf("dis_stable: %i\n", data);
+        last_data = data;
+        data = accel_get_data();
+    }
+    
+    printf("accel now stable\n");
+
+    steppers_move_dis(DIS_SPEED, DIS_DIR);
+    dis_accel_wait_for_dispense();
 }
 
 void dis_done()
 {
-    steppers_disable_dis();
     is_dispense = 0;
     is_dis_homed = 0;
 
