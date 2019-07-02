@@ -19,7 +19,7 @@ uint16_t pos_count = 0;
 void sel_ir_init()
 {
     //set ir sensor pin as input, INT1 pin (external interrupt)
-    DDRD &= ~SEL_IR_PIN;
+    SEL_IR_DDR &= ~(1 << SEL_IR_PIN);
 
     //set INT1 to trigger on any logical change
     EICRA &= ~(1 << ISC11);
@@ -106,7 +106,7 @@ ISR(INT1_vect)
 {
     if(steppers_sel_state == 2) //motor is moving
     {
-        if(PIND & SEL_IR_PIN) //pin is high = rising edge = nub exits the IR detector
+        if(SEL_IR_PIN_REG & (1 << SEL_IR_PIN)) //pin is high = rising edge = nub exits the IR detector
         {
             //homing logic
             if(is_homing == 1 && has_found_home_edge == 1)
@@ -119,7 +119,7 @@ ISR(INT1_vect)
                     is_pos_counting = 0;
 
                     steppers_hold_sel();
-                    printf("done homing\n");
+                    printf("done homing selector\n");
 
                     if(home_before_next_move == 1)
                     {
@@ -192,7 +192,7 @@ ISR(INT1_vect)
             }
         }
     }
-    else if(steppers_sel_state == 0 && !(PIND & SEL_IR_PIN)) //IR sensor detection while sel stepper is disabled
+    else if(steppers_sel_state == 0 && !(SEL_IR_PIN_REG & (1 << SEL_IR_PIN))) //IR sensor detection while sel stepper is disabled
     {
         home_before_next_move = 1;
         printf("warning: IR detection while not moving; will home before next move\n");

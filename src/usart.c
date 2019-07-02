@@ -9,7 +9,7 @@ volatile char char_count = 0; //for keeping track of how many characters have be
 void usart_init()
 {
     //set LED pin as output
-    DDRC |= USART_LED_PIN;
+    USART_LED_DDR |= (1 << USART_LED_PIN);
 
     //set baud; _VALUEs are from util/setbaud.h
     UBRR0H = UBRRH_VALUE;
@@ -41,7 +41,7 @@ void usart_init()
 */
 void usart_putchar(char c, FILE *stream)
 {
-    PORTC |= USART_LED_PIN;
+    USART_LED_PORT |= (1 << USART_LED_PIN);
 
     if(c == '\n')
         usart_putchar('\r', stream);
@@ -49,7 +49,7 @@ void usart_putchar(char c, FILE *stream)
     loop_until_bit_is_set(UCSR0A, UDRE0);
     UDR0 = c;
 
-    PORTC &= ~USART_LED_PIN;
+    USART_LED_PORT &= ~(1 << USART_LED_PIN);
 }
 
 /* 
@@ -140,7 +140,7 @@ void usart_parse_command(char input_char)
  */
 ISR(USART_RX_vect)
 {
-    PORTC |= USART_LED_PIN;
+    USART_LED_PORT |= (1 << USART_LED_PIN);
     usart_parse_command(UDR0);
-    PORTC &= ~USART_LED_PIN;
+    USART_LED_PORT &= ~(1 << USART_LED_PIN);
 }

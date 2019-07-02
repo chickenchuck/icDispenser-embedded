@@ -1,14 +1,7 @@
 #ifndef STEPPERS_H
 #define STEPPERS_H
 
-#include <avr/io.h>
-
-#define STEPPERS_SEL_EN_PIN (1 << PD7)
-#define STEPPERS_SEL_DIR_PIN (1 << PB0)
-#define STEPPERS_SEL_STEP_PIN (1 << PD6) //OC0A
-#define STEPPERS_DIS_EN_PIN (1 << PD4)
-#define STEPPERS_DIS_DIR_PIN (1 << PB1)
-#define STEPPERS_DIS_STEP_PIN (1 << PB3) //OC2A
+#include "pins.h"
 
 void steppers_init(void);
 void steppers_move_sel(uint8_t speed, uint8_t dir);

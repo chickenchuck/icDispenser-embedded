@@ -1,15 +1,14 @@
 #ifndef USART_H
 #define USART_H
 
+#include "pins.h"
 #include "global_definitions.h"
-#include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdio.h>
 
 #define BAUD 9600
 #include <util/setbaud.h>
 
-#define USART_LED_PIN (1 << PC0)
 #define USART_ARG_LENGTH 3 //length (number of characters) of command arguments
 
 #define USART_MOVE_SEL_COMMAND 'M'

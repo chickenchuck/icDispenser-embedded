@@ -11,10 +11,10 @@ uint8_t items_left_to_dispense = 0;
 void dis_limit_switch_init()
 {
     //set limit switch pin as input, INT0 pin (external interrupt)
-    DDRD &= ~DIS_LIMIT_SWITCH_PIN;
+    DIS_LS_DDR &= ~(1 << DIS_LS_PIN);
 
     //turn on internal pullup for limit switch
-    PORTD |= DIS_LIMIT_SWITCH_PIN;
+    DIS_LS_PORT |= (1 << DIS_LS_PIN);
 
     //set INT0 to trigger on any logical change
     EICRA &= ~(1 << ISC01);
@@ -24,7 +24,7 @@ void dis_limit_switch_init()
     EIMSK |= (1 << INT0);
 
     //initially determine if dispenser is homed by checking limit switch
-    if(PIND & DIS_LIMIT_SWITCH_PIN) //pin is high = button is not pressed (pin is pulled up)
+    if(DIS_LS_PIN_REG & (1 << DIS_LS_PIN)) //pin is high = button is not pressed (pin is pulled up)
         is_dis_homed = 1;
     else
         is_dis_homed = 0;
@@ -36,7 +36,7 @@ void dis_limit_switch_init()
  */
 void dis_dispense_init(uint8_t num_items)
 {
-    if(!(PIND & DIS_LIMIT_SWITCH_PIN)) //pin is low = falling edge of signal = switch is pressed = not homed
+    if(!(DIS_LS_PIN_REG & (1 << DIS_LS_PIN))) //pin is low = falling edge of signal = switch is pressed = not homed
         printf("error: dis not homed\n");
     else if(num_items <= 0)
         printf("error: not a valid number of ICs\n");
@@ -136,7 +136,7 @@ void dis_done()
  */
 ISR(INT0_vect)
 {
-    if(PIND & DIS_LIMIT_SWITCH_PIN) //pin is high = rising edge of signal = switch is unpressed
+    if(DIS_LS_PIN_REG & (1 << DIS_LS_PIN)) //pin is high = rising edge of signal = switch is unpressed
     {
         if(is_dis_homing == 1)
         {

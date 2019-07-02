@@ -1,12 +1,11 @@
 #ifndef DIS_H
 #define DIS_H
 
-#include <avr/io.h>
+#include "pins.h"
 #include <avr/interrupt.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DIS_LIMIT_SWITCH_PIN (1 << PD2) //INT0
 #define DIS_SPEED 90 //30
 #define DIS_HOME_SPEED 30
 #define DIS_DIR 0

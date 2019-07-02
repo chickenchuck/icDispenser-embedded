@@ -7,16 +7,16 @@ uint8_t steppers_dis_state = 0;
 void steppers_init()
 {
     //define all stepper control pins as outputs
-    DDRD |= STEPPERS_SEL_EN_PIN;
-    DDRB |= STEPPERS_SEL_DIR_PIN;
-    DDRD |= STEPPERS_SEL_STEP_PIN;
-    DDRD |= STEPPERS_DIS_EN_PIN;
-    DDRB |= STEPPERS_DIS_DIR_PIN;
-    DDRB |= STEPPERS_DIS_STEP_PIN;
+    STEPPERS_SEL_EN_DDR |= (1 << STEPPERS_SEL_EN_PIN);
+    STEPPERS_SEL_DIR_DDR |= (1 << STEPPERS_SEL_DIR_PIN);
+    STEPPERS_SEL_STEP_DDR |= (1 << STEPPERS_SEL_STEP_PIN);
+    STEPPERS_DIS_EN_DDR |= (1 << STEPPERS_DIS_EN_PIN);
+    STEPPERS_DIS_DIR_DDR |= (1 << STEPPERS_DIS_DIR_PIN);
+    STEPPERS_DIS_STEP_DDR |= (1 << STEPPERS_DIS_STEP_PIN);
 
     //disable both motors by setting enables to high
-    PORTD |= STEPPERS_SEL_EN_PIN;
-    PORTD |= STEPPERS_DIS_EN_PIN;
+    STEPPERS_SEL_EN_PORT |= (1 << STEPPERS_SEL_EN_PIN);
+    STEPPERS_DIS_EN_PORT |= (1 << STEPPERS_DIS_EN_PIN);
 
     //set timer compare output mode to toggle PWM pins on compare match
     TCCR0A &= ~(1 << COM0A1);
@@ -49,13 +49,13 @@ void steppers_init()
 void steppers_move_sel(uint8_t speed, uint8_t dir)
 {
     //enable stepper by setting enable pin to low
-    PORTD &= ~STEPPERS_SEL_EN_PIN;
+    STEPPERS_SEL_EN_PORT &= ~(1 << STEPPERS_SEL_EN_PIN);
 
     //set dir pin
     if(dir == 0)
-        PORTB &= ~STEPPERS_SEL_DIR_PIN;
+        STEPPERS_SEL_DIR_PORT &= ~(1 << STEPPERS_SEL_DIR_PIN);
     else if(dir == 1)
-        PORTB |= STEPPERS_SEL_DIR_PIN;
+        STEPPERS_SEL_DIR_PORT |= (1 << STEPPERS_SEL_DIR_PIN);
 
     //set TOP value for output compare to generate PWM signal
     OCR0A = speed;
@@ -74,7 +74,7 @@ void steppers_move_sel(uint8_t speed, uint8_t dir)
 void steppers_hold_sel()
 {
     //enable stepper by setting enable pin to low
-    PORTD &= ~STEPPERS_SEL_EN_PIN;
+    STEPPERS_SEL_EN_PORT &= ~(1 << STEPPERS_SEL_EN_PIN);
 
     //set timer clock select to disabled
     TCCR0B &= ~(1 << CS02);
@@ -90,7 +90,7 @@ void steppers_hold_sel()
 void steppers_disable_sel()
 {
     //set enable pin to high
-    PORTD |= STEPPERS_SEL_EN_PIN;
+    STEPPERS_SEL_EN_PORT |= (1 << STEPPERS_SEL_EN_PIN);
 
     //set timer clock select to disabled
     TCCR0B &= ~(1 << CS02);
@@ -111,13 +111,13 @@ void steppers_disable_sel()
 void steppers_move_dis(uint8_t speed, uint8_t dir)
 {
     //enable stepper by setting enable pin to low
-    PORTD &= ~STEPPERS_DIS_EN_PIN;
+    STEPPERS_DIS_EN_PORT &= ~(1 << STEPPERS_DIS_EN_PIN);
 
     //set dir pin
     if(dir == 0)
-        PORTB &= ~STEPPERS_DIS_DIR_PIN;
+        STEPPERS_DIS_DIR_PORT &= ~(1 << STEPPERS_DIS_DIR_PIN);
     else if(dir == 1)
-        PORTB |= STEPPERS_DIS_DIR_PIN;
+        STEPPERS_DIS_DIR_PORT |= (1 << STEPPERS_DIS_DIR_PIN);
 
     //set TOP value for output compare to generate PWM signal
     OCR2A = speed;
@@ -136,7 +136,7 @@ void steppers_move_dis(uint8_t speed, uint8_t dir)
 void steppers_hold_dis()
 {
     //enable stepper by setting enable pin to low
-    PORTD &= ~STEPPERS_DIS_EN_PIN;
+    STEPPERS_DIS_EN_PORT &= ~(1 << STEPPERS_DIS_EN_PIN);
 
     //set timer clock select to disabled
     TCCR2B &= ~(1 << CS22);
@@ -152,7 +152,7 @@ void steppers_hold_dis()
 void steppers_disable_dis()
 {
     //set enable pin to high
-    PORTD |= STEPPERS_DIS_EN_PIN;
+    STEPPERS_DIS_EN_PORT |= (1 << STEPPERS_DIS_EN_PIN);
 
     //set timer clock select to disabled
     TCCR2B &= ~(1 << CS22);
