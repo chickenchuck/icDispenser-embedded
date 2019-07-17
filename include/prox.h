@@ -23,6 +23,8 @@
 #define PROX_IRLED 0x83
 #define PROX_PROXDATA 0x87
 
+#define PROX_IRLED_CURRENT 20 //200mA
+
 void prox_init(void);
 void prox_TWI_start(void);
 void prox_TWI_stop(void);
