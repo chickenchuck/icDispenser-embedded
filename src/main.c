@@ -6,9 +6,9 @@
 #include "main.h"
 #include "steppers.h"
 #include "usart.h"
-#include "accel.h"
 #include "sel.h"
 #include "dis.h"
+#include "prox.h"
 #include <stdio.h>
 
 int main()
