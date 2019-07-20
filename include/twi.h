@@ -21,7 +21,7 @@ void twi_write_init(uint8_t twi_addr);
 void twi_write_data(uint8_t data);
 void twi_read_init(uint8_t twi_addr);
 uint8_t twi_read_data(void);
-void twi_write_reg(uint8_t twi_addr, uint8_t reg_addr, uint8_t data);
+void twi_write_reg8(uint8_t twi_addr, uint8_t reg_addr, uint8_t data);
 uint8_t twi_read_reg8(uint8_t twi_addr, uint8_t reg_addr);
 uint16_t twi_read_reg16(uint8_t twi_addr, uint8_t reg_addr);
 

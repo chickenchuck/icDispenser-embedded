@@ -68,7 +68,7 @@ uint8_t twi_read_data()
     return TWDR;
 }
 
-void twi_write_reg(uint8_t twi_adddr, uint8_t reg_addr, uint8_t data)
+void twi_write_reg8(uint8_t twi_adddr, uint8_t reg_addr, uint8_t data)
 {
     twi_start();
     twi_write_init(twi_addr);
