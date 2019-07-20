@@ -3,7 +3,7 @@
 void twi_init()
 {
     //set twi bit rate register, 100 kHz
-    TWBR = (uint8_t)PROX_TWBR_VAL;
+    TWBR = (uint8_t)TWI_TWBR_VAL;
 }
 
 void twi_start()
@@ -68,7 +68,7 @@ uint8_t twi_read_data()
     return TWDR;
 }
 
-void twi_write_reg8(uint8_t twi_adddr, uint8_t reg_addr, uint8_t data)
+void twi_write_reg8(uint8_t twi_addr, uint8_t reg_addr, uint8_t data)
 {
     twi_start();
     twi_write_init(twi_addr);
@@ -77,7 +77,7 @@ void twi_write_reg8(uint8_t twi_adddr, uint8_t reg_addr, uint8_t data)
     twi_stop();
 }
 
-uint8_t twi_read_reg8(uint8_t twi_adddr, uint8_t reg_addr)
+uint8_t twi_read_reg8(uint8_t twi_addr, uint8_t reg_addr)
 {
     twi_start();
     twi_write_init(twi_addr);
@@ -89,7 +89,7 @@ uint8_t twi_read_reg8(uint8_t twi_adddr, uint8_t reg_addr)
     return twi_read_data();
 }
 
-uint16_t twi_read_reg16(uint8_t twi_adddr, uint8_t reg_addr)
+uint16_t twi_read_reg16(uint8_t twi_addr, uint8_t reg_addr)
 {
     twi_start();
     twi_write_init(twi_addr);

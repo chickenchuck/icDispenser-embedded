@@ -7,7 +7,7 @@
 
 #define TWI_F_SCL 100000UL
 #define TWI_PRESCALER 1
-#define TWI_TWBR_VAL ((((F_CPU / PROX_F_SCL) / PROX_TWI_PRESCALER) - 16) / 2)
+#define TWI_TWBR_VAL ((((F_CPU / TWI_F_SCL) / TWI_PRESCALER) - 16) / 2)
 #define TWI_START 0x08
 #define TWI_REPEATED_START 0x10
 #define TWI_MT_SLA_ACK 0x18
