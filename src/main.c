@@ -14,8 +14,8 @@
 int main()
 {
     steppers_init();
+    prox_init();
     usart_init();
-    accel_init();
     sel_ir_init();
     dis_limit_switch_init();
 
@@ -27,7 +27,7 @@ int main()
 
     printf("IC dispenser ready\n");
 
-    while(1){}
-    //while(1){printf("%i\n", accel_get_data());}
+    //while(1){}
+    while(1){printf("%i\n", prox_get_data());}
     return 0;
 }
