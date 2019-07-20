@@ -1,6 +1,6 @@
 #include "dis.h"
 #include "steppers.h"
-#include "accel.h"
+//#include "accel.h"
 
 uint8_t is_dispense = 0;
 uint8_t is_dispense_no_home = 0;
@@ -46,7 +46,7 @@ void dis_dispense_init(uint8_t num_items)
         is_dispense = 1;
         steppers_move_dis(DIS_SPEED, DIS_DIR);
         printf("dispense start\n");
-        dis_accel_wait_for_dispense();
+        //dis_accel_wait_for_dispense();
     }
 }
 
@@ -70,7 +70,7 @@ void dis_home_init()
     else
         printf("dispenser already homed\n");
 }
-
+/*
 void dis_accel_wait_for_dispense()
 {
     uint16_t last_data = accel_get_data();
@@ -116,7 +116,7 @@ void dis_accel_wait_for_stable()
     steppers_move_dis(DIS_SPEED, DIS_DIR);
     dis_accel_wait_for_dispense();
 }
-
+*/
 void dis_done()
 {
     is_dispense = 0;
