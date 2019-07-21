@@ -105,6 +105,7 @@ void usart_parse_command(char input_char)
     else if(input_char == USART_DISABLE_DIS_COMMAND)
     {
         steppers_disable_dis();
+        dis_is_dispense = 0;
         printf("disabled dispenser\n");
         char_count = 0;
     }

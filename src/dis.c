@@ -2,7 +2,7 @@
 #include "steppers.h"
 #include "prox.h"
 
-uint8_t is_dispense = 0;
+uint8_t dis_is_dispense = 0;
 uint8_t is_dispense_no_home = 0;
 uint8_t is_dis_homing = 0;
 uint8_t is_dis_homed = 0;
@@ -43,10 +43,9 @@ void dis_dispense_init(uint8_t num_items)
     else
     {
         items_left_to_dispense = num_items;
-        is_dispense = 1;
+        dis_is_dispense = 1;
         steppers_move_dis(DIS_SPEED, DIS_DIR);
         printf("dispense start\n");
-        dis_wait_for_dispense();
     }
 }
 
@@ -81,6 +80,12 @@ void dis_wait_for_dispense()
         printf("dis_dispense: %i\n", data);
         last_data = data;
         data = prox_get_data();
+
+        if(dis_is_dispense == 0)
+        {
+            printf("wait_for_dispense exited\n");
+            return;
+        }
     }
 
     steppers_disable_dis();
@@ -101,7 +106,7 @@ void dis_wait_for_stable()
 
     while(stable_count < DIS_PROX_STABLE_NUM)
     {
-        if(abs(data - last_data) < DIS_PROX_STABLE_THRESHOLD)
+        if(dis_is_dispense && abs(data - last_data) < DIS_PROX_STABLE_THRESHOLD)
             stable_count++;
         else
             stable_count = 0;
@@ -109,6 +114,12 @@ void dis_wait_for_stable()
         printf("dis_stable: %i\n", data);
         last_data = data;
         data = prox_get_data();
+
+        if(dis_is_dispense == 0)
+        {
+            printf("wait_for_stable exited\n");
+            return;
+        }
     }
     
     printf("prox now stable\n");
@@ -119,7 +130,7 @@ void dis_wait_for_stable()
 
 void dis_done()
 {
-    is_dispense = 0;
+    dis_is_dispense = 0;
     is_dis_homed = 0;
 
     printf("done dispensing\n");

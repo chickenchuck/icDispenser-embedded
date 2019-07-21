@@ -22,5 +22,7 @@ void dis_wait_for_dispense(void);
 void dis_wait_for_stable(void);
 void dis_done(void);
 
+extern uint8_t dis_is_dispense;
+
 #endif
 

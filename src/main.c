@@ -19,7 +19,7 @@ int main()
     sel_ir_init();
     dis_limit_switch_init();
 
-    //setup serial output as stream and direct to stdout, has to be in main method for some reason
+    //setup serial output as stream and direct to stdout
     FILE usart_output = FDEV_SETUP_STREAM(usart_putchar, NULL, _FDEV_SETUP_WRITE);
     stdout = &usart_output;
     
@@ -27,7 +27,17 @@ int main()
 
     printf("IC dispenser ready\n");
 
-    while(1){}
+    while(1)
+    {
+        if(dis_is_dispense == 1)
+        {
+            printf("dde\n");
+            dis_wait_for_dispense();
+        }
+
+        _delay_ms(1);
+    }
+
     //while(1){printf("%i\n", prox_get_data());}
     return 0;
 }
