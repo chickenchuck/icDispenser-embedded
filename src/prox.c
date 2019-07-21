@@ -9,7 +9,7 @@ void prox_init()
     twi_write_reg8(PROX_TWI_ADDR, PROX_IRLED_REG, PROX_IRLED_CURRENT);
 
     //set prox reading rate
-    twi_write_reg8(PROX_TWI_ADDR, PROX_PROXRATE_REG, PROX_PROXRATE_16_625);
+    twi_write_reg8(PROX_TWI_ADDR, PROX_PROXRATE_REG, PROX_PROXRATE_250);
 }
 
 uint16_t prox_get_data()
@@ -21,7 +21,7 @@ uint16_t prox_get_data()
     {
         uint8_t result = twi_read_reg8(PROX_TWI_ADDR, PROX_COMMAND_REG);
         if(result & PROX_PROXREADY)
-            return twi_read_reg16(PROX_TWI_ADDR, PROX_PROXDATA_REG);
+            return twi_read_reg16(PROX_TWI_ADDR, PROX_PROXDATA_HIGH_REG, PROX_PROXDATA_LOW_REG);
     }
 }
 

@@ -89,7 +89,14 @@ uint8_t twi_read_reg8(uint8_t twi_addr, uint8_t reg_addr)
     return twi_read_data();
 }
 
-uint16_t twi_read_reg16(uint8_t twi_addr, uint8_t reg_addr)
+uint16_t twi_read_reg16(uint8_t twi_addr, uint8_t reg_high_addr, uint8_t reg_low_addr)
+{
+    uint8_t data_high = twi_read_reg8(twi_addr, reg_high_addr);
+    uint8_t data_low = twi_read_reg8(twi_addr, reg_low_addr);
+    return (data_high << 8) | data_low;
+}
+
+/*uint16_t twi_read_reg16(uint8_t twi_addr, uint8_t reg_addr)
 {
     twi_start();
     twi_write_init(twi_addr);
@@ -103,5 +110,5 @@ uint16_t twi_read_reg16(uint8_t twi_addr, uint8_t reg_addr)
     twi_stop();
 
     return data;
-}
+}*/
 
