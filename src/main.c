@@ -9,7 +9,6 @@
 #include "sel.h"
 #include "dis.h"
 #include "prox.h"
-#include <stdio.h>
 
 int main()
 {
