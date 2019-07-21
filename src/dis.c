@@ -1,6 +1,6 @@
 #include "dis.h"
 #include "steppers.h"
-//#include "accel.h"
+#include "prox.h"
 
 uint8_t is_dispense = 0;
 uint8_t is_dispense_no_home = 0;
@@ -46,7 +46,7 @@ void dis_dispense_init(uint8_t num_items)
         is_dispense = 1;
         steppers_move_dis(DIS_SPEED, DIS_DIR);
         printf("dispense start\n");
-        //dis_accel_wait_for_dispense();
+        dis_wait_for_dispense();
     }
 }
 
@@ -70,17 +70,17 @@ void dis_home_init()
     else
         printf("dispenser already homed\n");
 }
-/*
-void dis_accel_wait_for_dispense()
-{
-    uint16_t last_data = accel_get_data();
-    uint16_t data = accel_get_data();
 
-    while(abs(data - last_data) < DIS_ACCEL_DIFF_THRESHOLD)
+void dis_wait_for_dispense()
+{
+    uint16_t last_data = prox_get_data();
+    uint16_t data = prox_get_data();
+
+    while(abs(data - last_data) < DIS_PROX_DIFF_THRESHOLD)
     {
         printf("dis_dispense: %i\n", data);
         last_data = data;
-        data = accel_get_data();
+        data = prox_get_data();
     }
 
     steppers_disable_dis();
@@ -90,33 +90,33 @@ void dis_accel_wait_for_dispense()
     if(items_left_to_dispense == 0)
         dis_done();
     else
-        dis_accel_wait_for_stable();
+        dis_wait_for_stable();
 }
 
-void dis_accel_wait_for_stable()
+void dis_wait_for_stable()
 {
-    uint16_t last_data = accel_get_data();
-    uint16_t data = accel_get_data();
+    uint16_t last_data = prox_get_data();
+    uint16_t data = prox_get_data();
     uint8_t stable_count = 0;
 
-    while(stable_count < DIS_ACCEL_STABLE_NUM)
+    while(stable_count < DIS_PROX_STABLE_NUM)
     {
-        if(abs(data - last_data) < DIS_ACCEL_STABLE_THRESHOLD)
+        if(abs(data - last_data) < DIS_PROX_STABLE_THRESHOLD)
             stable_count++;
         else
             stable_count = 0;
         
         printf("dis_stable: %i\n", data);
         last_data = data;
-        data = accel_get_data();
+        data = prox_get_data();
     }
     
-    printf("accel now stable\n");
+    printf("prox now stable\n");
 
     steppers_move_dis(DIS_SPEED, DIS_DIR);
-    dis_accel_wait_for_dispense();
+    dis_wait_for_dispense();
 }
-*/
+
 void dis_done()
 {
     is_dispense = 0;
