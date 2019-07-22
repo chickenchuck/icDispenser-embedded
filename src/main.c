@@ -8,15 +8,13 @@
 #include "usart.h"
 #include "sel.h"
 #include "dis.h"
-#include "prox.h"
 
 int main()
 {
     steppers_init();
-    prox_init();
     usart_init();
     sel_ir_init();
-    dis_limit_switch_init();
+    dis_init();
 
     //setup serial output as stream and direct to stdout
     FILE usart_output = FDEV_SETUP_STREAM(usart_putchar, NULL, _FDEV_SETUP_WRITE);

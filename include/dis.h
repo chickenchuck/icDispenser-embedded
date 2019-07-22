@@ -11,7 +11,7 @@
 #define DIS_DIR 0
 #define DIS_HOME_DIR 1
 
-void dis_limit_switch_init(void);
+void dis_init(void);
 void dis_dispense_init(uint8_t num_items);
 void dis_dispense_no_home_init(uint8_t num_items);
 void dis_home_init(void);

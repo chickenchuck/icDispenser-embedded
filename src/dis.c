@@ -8,7 +8,7 @@ uint8_t is_dis_homing = 0;
 uint8_t is_dis_homed = 0;
 uint8_t items_left_to_dispense = 0;
 
-void dis_limit_switch_init()
+void dis_init()
 {
     //set limit switch pin as input, INT0 pin (external interrupt)
     DIS_LS_DDR &= ~(1 << DIS_LS_PIN);
