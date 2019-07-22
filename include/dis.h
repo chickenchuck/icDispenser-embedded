@@ -10,9 +10,9 @@
 #define DIS_HOME_SPEED 30
 #define DIS_DIR 0
 #define DIS_HOME_DIR 1
-#define DIS_PROX_DIFF_THRESHOLD 100
-#define DIS_PROX_STABLE_THRESHOLD 100
-#define DIS_PROX_STABLE_NUM 5
+#define DIS_PROX_DIFF_THRESHOLD 18
+#define DIS_PROX_STABLE_THRESHOLD 18
+#define DIS_PROX_STABLE_NUM 20
 
 void dis_limit_switch_init(void);
 void dis_dispense_init(uint8_t num_items);
