@@ -77,7 +77,7 @@ void dis_wait_for_dispense()
 
     while(abs(data - last_data) < DIS_PROX_DIFF_THRESHOLD)
     {
-        printf("dis_dispense: %i\n", data);
+        //printf("dis_dispense: %i\n", data);
         last_data = data;
         data = prox_get_data();
 
@@ -111,7 +111,7 @@ void dis_wait_for_stable()
         else
             stable_count = 0;
         
-        printf("dis_stable: %i\n", data);
+        //printf("dis_stable: %i\n", data);
         last_data = data;
         data = prox_get_data();
 
