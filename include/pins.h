@@ -37,6 +37,11 @@
 #define DIS_LS_PORT PORTD
 #define DIS_LS_PIN PD2 //INT0
 
+#define DIS_IR_DDR DDRB
+#define DIS_IR_PIN_REG PINB
+#define DIS_IR_PORT PORTB
+#define DIS_IR_PIN PB2 //PCINT2
+
 #define USART_LED_DDR DDRC
 #define USART_LED_PORT PORTC
 #define USART_LED_PIN PC0
