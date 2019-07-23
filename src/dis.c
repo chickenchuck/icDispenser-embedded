@@ -27,6 +27,13 @@ void dis_init()
         is_dis_homed = 1;
     else
         is_dis_homed = 0;
+
+
+    //set ir pin as input, PCINT2 pin (external interrupt)
+    DIS_IR_DDR &= ~(1 << DIS_IR_PIN);
+
+    //turn on internal pullup for ir
+    DIS_IR_PORT |= (1 << DIS_IR_PIN);
 }
 
 /*
@@ -69,17 +76,15 @@ void dis_home_init()
         printf("dispenser already homed\n");
 }
 
+uint8_t dis_ir_get()
+{
+    return DIS_IR_PIN_REG & (1 << DIS_IR_PIN);
+}
+
 void dis_wait_for_dispense()
 {
-    uint16_t last_data = prox_get_data();
-    uint16_t data = prox_get_data();
-
-    while(abs(data - last_data) < DIS_PROX_DIFF_THRESHOLD)
+    while(dis_ir_get() == DIS_IR_UNBROKEN)
     {
-        //printf("dis_dispense: %i\n", data);
-        last_data = data;
-        data = prox_get_data();
-
         if(dis_is_dispense == 0)
         {
             printf("wait_for_dispense exited\n");
@@ -99,20 +104,16 @@ void dis_wait_for_dispense()
 
 void dis_wait_for_stable()
 {
-    uint16_t last_data = prox_get_data();
-    uint16_t data = prox_get_data();
     uint8_t stable_count = 0;
 
-    while(stable_count < DIS_PROX_STABLE_NUM)
+    while(stable_count < DIS_IR_STABLE_NUM)
     {
-        if(dis_is_dispense && abs(data - last_data) < DIS_PROX_STABLE_THRESHOLD)
+        if(dis_ir_get() == DIS_IR_UNBROKEN)
             stable_count++;
         else
             stable_count = 0;
         
         //printf("dis_stable: %i\n", data);
-        last_data = data;
-        data = prox_get_data();
 
         if(dis_is_dispense == 0)
         {
@@ -121,7 +122,7 @@ void dis_wait_for_stable()
         }
     }
     
-    printf("prox now stable\n");
+    printf("ir now stable\n");
 
     steppers_move_dis(DIS_SPEED, DIS_DIR);
     dis_wait_for_dispense();

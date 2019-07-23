@@ -28,11 +28,11 @@ int main()
     {
         if(dis_is_dispense == 1)
         {
-            printf("dde\n");
             dis_wait_for_dispense();
         }
 
         _delay_ms(1);
+        //printf("%i\n", dis_ir_get());
     }
 
     //while(1){printf("%i\n", prox_get_data());}
