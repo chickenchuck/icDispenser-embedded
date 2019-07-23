@@ -1,6 +1,5 @@
 #include "dis.h"
 #include "steppers.h"
-#include "prox.h"
 
 uint8_t dis_is_dispense = 0;
 uint8_t is_dispense_no_home = 0;
