@@ -8,19 +8,16 @@ For use with ATmega168/328
 
 No libraries are used
 
-All functionality is run through interrupts; the main loop does nothing. 
-
 [Platformio](https://github.com/platformio/platformio-core) is used for development.
 
-Some abbreviations used:
+Abbreviations:
 sel = tube selector
 dis = dispenser
 
 ### Files
 - main.h, main.c
 - steppers.h, steppers.c - low-level functionality for moving steppers
-- USART.h, USART.c - setup of USART peripheral, serial command parsing
-- accel.h, accel.c - communication with MPU6050 accelerometer
+- usart.h, usart.c - setup of USART peripheral, serial command parsing
 - sel.h, sel.c - tube selector functionality
 - dis.h, dis.c - dispensing functionality
 
@@ -29,8 +26,8 @@ dis = dispenser
 - Stepper driver for selector motor
 - Stepper driver for dispenser motor
 - IR sensor (beam/break) for index positioning
+- IR sensor (beam/break) for detecting when ICs are dispensed
 - Limit switch for dispenser homing
-- MPU6050 accelerometer for sensing when ICs fall in container
 
 ### Processor peripherals used
 - TIMER0: for timing selector motor pulses
@@ -38,7 +35,6 @@ dis = dispenser
 - INT0 (interrupt 0): connected to dispenser limit switch for knowing when to stop homing dispenser
 - INT1 (interrupt 1): connected to selector limit switch for keeping track of its position
 - USART0: serial communications with master device
-- TWI (I2C): for communications with MPU6050 accelerometer
 
 ### Serial commands
 - E: enables selector motor (hold position)
