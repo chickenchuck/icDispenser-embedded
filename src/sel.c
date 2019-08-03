@@ -69,7 +69,7 @@ void sel_move_init(uint8_t destination_index)
         else if(sel_index == target_index)
         {
             steppers_hold_sel();
-            printf("already there i%i d%i\n", sel_index, target_index);
+            printf("done moving to index\n");
         }
         else
             steppers_move_sel(SEL_MOVE_SPEED, SEL_DIR);
