@@ -152,7 +152,6 @@ ISR(INT0_vect)
         if(is_dis_homing == 1)
         {
             steppers_disable_dis();
-            steppers_disable_sel();
             is_dis_homing = 0;
             is_dis_homed = 1;
             printf("done homing dispenser\n");
