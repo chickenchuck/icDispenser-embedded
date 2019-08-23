@@ -5,9 +5,9 @@
 #include <avr/interrupt.h>
 #include <stdio.h>
 
-#define SEL_MOVE_SPEED 165
+#define SEL_MOVE_SPEED 100 //165
 #define SEL_MOVE_SPEED_SLOW 250
-#define SEL_HOME_SPEED 180
+#define SEL_HOME_SPEED 120 //180
 #define SEL_HOME_SPEED_SLOW 250
 
 #define SEL_DIR 1
