@@ -109,6 +109,11 @@ void usart_parse_command(char input_char)
         printf("disabled dispenser\n");
         char_count = 0;
     }
+    else if(input_char == USART_GET_SEL_INDEX_COMMAND)
+    {
+        printf("sel index: %i\n", sel_index);
+        char_count = 0;
+    }
     else
     {
         if(char_count > 0 && char_count < USART_ARG_LENGTH + 1) //argument doesn't have enough characters yet

@@ -22,6 +22,7 @@
 #define USART_ENABLE_DIS_COMMAND 'N'
 #define USART_DISABLE_DIS_COMMAND 'S'
 #define USART_DISPENSE_NO_HOME_COMMAND 'Q'
+#define USART_GET_SEL_INDEX_COMMAND 'G'
 
 void usart_init(void);
 void usart_putchar(char c, FILE *stream);
