@@ -1,4 +1,5 @@
 #include "sel.h"
+#include "dis.h"
 #include "steppers.h"
 
 uint8_t sel_index = 0;
@@ -12,6 +13,7 @@ uint8_t has_found_home = 0;
 uint8_t has_found_home_edge = 0;
 uint8_t is_first_home = 0;
 uint8_t home_before_next_move = 0;
+uint8_t sel_move_after_dis_home[2] = {0, 0};
 
 uint8_t is_pos_counting = 0;
 uint16_t pos_count = 0;
@@ -30,6 +32,23 @@ void sel_ir_init()
 }
 
 /*
+ * Checks if dispenser is homed, and sets it to home and go back to what sel was doing after it homes
+ */
+uint8_t sel_move_check_dis(uint8_t caller, uint8_t arg)
+{
+    if(is_dis_homed == 1)
+        return 1;
+    else
+    {
+        sel_move_after_dis_home[0] = caller;
+        sel_move_after_dis_home[1] = arg;
+        dis_home_init();
+        printf("dispenser not homed! dispensing now\n");
+        return 0;
+    }
+}
+
+/*
  * Sets the maximum index based on the total number of tubes
  */
 void sel_set_max_index(uint8_t num_tubes)
@@ -40,10 +59,13 @@ void sel_set_max_index(uint8_t num_tubes)
 
 void sel_home_init()
 {
-    is_homing = 1;
-    sel_index = 0;
-    steppers_move_sel(SEL_HOME_SPEED, SEL_DIR);
-    printf("start sel home\n");
+    if(sel_move_check_dis(1, 0) == 1)
+    {
+        is_homing = 1;
+        sel_index = 0;
+        steppers_move_sel(SEL_HOME_SPEED, SEL_DIR);
+        printf("start sel home\n");
+    }
 }
 
 /*
@@ -54,25 +76,28 @@ void sel_home_init()
  */
 void sel_move_init(uint8_t destination_index)
 {
-    target_index = destination_index;
-    has_found_target = 0;
-    is_move_next_mode = 0;
-
-    printf("start sel move i%i t%i\n", sel_index, target_index);
-
-    if(home_before_next_move == 1)
-        sel_home_init();
-    else
+    if(sel_move_check_dis(2, destination_index) == 1)
     {
-        if(target_index > max_index)
-            printf("error: target index out of bounds\n");
-        else if(sel_index == target_index)
-        {
-            steppers_hold_sel();
-            printf("done moving to index\n");
-        }
+        target_index = destination_index;
+        has_found_target = 0;
+        is_move_next_mode = 0;
+
+        printf("start sel move i%i t%i\n", sel_index, target_index);
+
+        if(home_before_next_move == 1)
+            sel_home_init();
         else
-            steppers_move_sel(SEL_MOVE_SPEED, SEL_DIR);
+        {
+            if(target_index > max_index)
+                printf("error: target index out of bounds\n");
+            else if(sel_index == target_index)
+            {
+                steppers_hold_sel();
+                printf("done moving to index\n");
+            }
+            else
+                steppers_move_sel(SEL_MOVE_SPEED, SEL_DIR);
+        }
     }
 }
 

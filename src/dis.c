@@ -1,4 +1,5 @@
 #include "dis.h"
+#include "sel.h"
 #include "steppers.h"
 
 uint8_t dis_is_dispense = 0;
@@ -155,6 +156,12 @@ ISR(INT0_vect)
             is_dis_homing = 0;
             is_dis_homed = 1;
             printf("done homing dispenser\n");
+
+            if(sel_move_after_dis_home[0] == 1)
+                sel_home_init();
+            else if(sel_move_after_dis_home[0] == 2)
+                sel_move_init(sel_move_after_dis_home[1]);
+            sel_move_after_dis_home[0] = 0;
         }
     }
     else //pin is low = falling edge of signal = switch is pressed
