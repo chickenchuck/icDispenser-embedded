@@ -160,7 +160,6 @@ ISR(INT0_vect)
     else //pin is low = falling edge of signal = switch is pressed
     {
         is_dis_homed = 0;
-        //printf("wer\n");
     }
 }
 

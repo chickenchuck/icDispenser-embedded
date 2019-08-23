@@ -41,7 +41,7 @@ void sel_set_max_index(uint8_t num_tubes)
 void sel_home_init()
 {
     is_homing = 1;
-    sel_index = 0; //?D?D?D?D?D??D?D?D
+    sel_index = 0;
     steppers_move_sel(SEL_HOME_SPEED, SEL_DIR);
     printf("start sel home\n");
 }
