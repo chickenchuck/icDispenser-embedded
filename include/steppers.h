@@ -11,8 +11,8 @@ void steppers_move_dis(uint8_t speed, uint8_t dir);
 void steppers_hold_dis(void);
 void steppers_disable_dis(void);
 
-extern uint8_t steppers_sel_state;
-extern uint8_t steppers_dis_state;
+extern volatile uint8_t steppers_sel_state;
+extern volatile uint8_t steppers_dis_state;
 
 #endif
 

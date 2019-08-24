@@ -20,8 +20,8 @@ void sel_home_init(void);
 void sel_move_init(uint8_t destination_index);
 void sel_move_next_init(void);
 
-extern uint8_t sel_index;
-extern uint8_t sel_move_after_dis_home[2];
+extern volatile uint8_t sel_index;
+extern volatile uint8_t sel_move_after_dis_home[2];
 
 #endif
 

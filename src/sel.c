@@ -2,21 +2,21 @@
 #include "dis.h"
 #include "steppers.h"
 
-uint8_t sel_index = 0;
-uint8_t target_index = 0;
-uint8_t max_index = 5; //total tubes - 1
-uint8_t is_move_next_mode = 0; //is the selector in a move_next operation
-uint8_t has_found_target = 0;
+volatile uint8_t sel_index = 0;
+volatile uint8_t target_index = 0;
+volatile uint8_t max_index = 5; //total tubes - 1
+volatile uint8_t is_move_next_mode = 0; //is the selector in a move_next operation
+volatile uint8_t has_found_target = 0;
 
-uint8_t is_homing = 0;
-uint8_t has_found_home = 0;
-uint8_t has_found_home_edge = 0;
-uint8_t is_first_home = 0;
-uint8_t home_before_next_move = 0;
-uint8_t sel_move_after_dis_home[2] = {0, 0};
+volatile uint8_t is_homing = 0;
+volatile uint8_t has_found_home = 0;
+volatile uint8_t has_found_home_edge = 0;
+volatile uint8_t is_first_home = 0;
+volatile uint8_t home_before_next_move = 0;
+volatile uint8_t sel_move_after_dis_home[2] = {0, 0};
 
-uint8_t is_pos_counting = 0;
-uint16_t pos_count = 0;
+volatile uint8_t is_pos_counting = 0;
+volatile uint16_t pos_count = 0;
 
 void sel_ir_init()
 {

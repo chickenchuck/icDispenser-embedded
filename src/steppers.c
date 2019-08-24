@@ -1,8 +1,8 @@
 #include "steppers.h"
 
 //motor states: 0=disabled, 1=hold, 2=moving
-uint8_t steppers_sel_state = 0;
-uint8_t steppers_dis_state = 0;
+volatile uint8_t steppers_sel_state = 0;
+volatile uint8_t steppers_dis_state = 0;
 
 void steppers_init()
 {

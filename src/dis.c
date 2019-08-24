@@ -2,12 +2,12 @@
 #include "sel.h"
 #include "steppers.h"
 
-uint8_t dis_is_dispense = 0;
-uint8_t is_dispense_no_home = 0;
-uint8_t is_dis_homing = 0;
-uint8_t is_dis_homed = 0;
-uint8_t items_left_to_dispense = 0;
-uint64_t dispense_pos = 0;
+volatile uint8_t dis_is_dispense = 0;
+volatile uint8_t is_dispense_no_home = 0;
+volatile uint8_t is_dis_homing = 0;
+volatile uint8_t is_dis_homed = 0;
+volatile uint8_t items_left_to_dispense = 0;
+volatile uint64_t dispense_pos = 0;
 
 void dis_init()
 {
