@@ -31,7 +31,6 @@ int main()
             dis_wait_for_dispense();
         }
 
-        _delay_ms(1);
         //printf("%i\n", dis_ir_get());
     }
 
