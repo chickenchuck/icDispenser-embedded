@@ -1,7 +1,6 @@
 #ifndef USART_H
 #define USART_H
 
-#include "pins.h"
 #include "global_definitions.h"
 #include <avr/interrupt.h>
 #include <stdio.h>
