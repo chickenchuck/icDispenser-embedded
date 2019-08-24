@@ -30,7 +30,6 @@ int main()
         {
             dis_wait_for_dispense();
         }
-
         //printf("%i\n", dis_ir_get());
     }
 
