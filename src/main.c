@@ -35,6 +35,5 @@ int main()
         //printf("%i\n", dis_ir_get());
     }
 
-    //while(1){printf("%i\n", prox_get_data());}
     return 0;
 }
