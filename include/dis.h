@@ -13,6 +13,7 @@
 #define DIS_IR_BROKEN 0
 #define DIS_IR_UNBROKEN 4
 #define DIS_IR_STABLE_NUM 100
+#define DIS_TOO_FAR_POS 210000UL
 
 void dis_init(void);
 void dis_dispense_init(uint8_t num_items);

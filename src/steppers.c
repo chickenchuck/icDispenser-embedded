@@ -34,8 +34,9 @@ void steppers_init()
     TCCR2A &= ~(1 << WGM21);
     TCCR2A |= (1 << WGM20);
 
-    //enable overflow interrupt for timer0
+    //enable overflow interrupt for timer0 and timer2
     TIMSK0 |= (1 << TOIE0);
+    TIMSK2 |= (1 << TOIE2);
 }
 
 /*

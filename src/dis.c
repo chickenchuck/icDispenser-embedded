@@ -7,6 +7,7 @@ uint8_t is_dispense_no_home = 0;
 uint8_t is_dis_homing = 0;
 uint8_t is_dis_homed = 0;
 uint8_t items_left_to_dispense = 0;
+uint64_t dispense_pos = 0;
 
 void dis_init()
 {
@@ -170,3 +171,19 @@ ISR(INT0_vect)
     }
 }
 
+ISR(TIMER2_OVF_vect)
+{
+    if(dis_is_dispense == 1)
+    {
+        dispense_pos++;
+        if(dispense_pos == DIS_TOO_FAR_POS)
+        {
+            steppers_disable_dis();
+            dis_is_dispense = 0;
+            is_dis_homed = 0;
+            dispense_pos = 0;
+            dis_home_init();
+            printf("error: dispenser went too far!\n");
+        }
+    }
+}
