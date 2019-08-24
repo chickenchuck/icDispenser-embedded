@@ -51,6 +51,7 @@ void dis_dispense_init(uint8_t num_items)
     else
     {
         items_left_to_dispense = num_items;
+        dispense_pos = 0;
         dis_is_dispense = 1;
         steppers_move_dis(DIS_SPEED, DIS_DIR);
         printf("dispense start\n");
@@ -87,6 +88,12 @@ void dis_wait_for_dispense()
 {
     while(dis_ir_get() == DIS_IR_UNBROKEN)
     {
+        if(dispense_pos >= DIS_TOO_FAR_POS)
+        {
+            steppers_disable_dis();
+            dis_done();
+            printf("error: dispenser went too far!\n");
+        }
         if(dis_is_dispense == 0)
         {
             printf("wait_for_dispense exited\n");
@@ -173,17 +180,7 @@ ISR(INT0_vect)
 
 ISR(TIMER2_OVF_vect)
 {
-    if(dis_is_dispense == 1)
-    {
-        dispense_pos++;
-        if(dispense_pos == DIS_TOO_FAR_POS)
-        {
-            steppers_disable_dis();
-            dis_is_dispense = 0;
-            is_dis_homed = 0;
-            dispense_pos = 0;
-            dis_home_init();
-            printf("error: dispenser went too far!\n");
-        }
-    }
+    cli();
+    dispense_pos++;
+    sei();
 }
