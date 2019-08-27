@@ -75,8 +75,7 @@ void usart_parse_command(char input_char)
     }
     else if(input_char == USART_DISABLE_SEL_COMMAND)
     {
-        steppers_disable_sel();
-        printf("disabled selector\n");
+        sel_disable();
         char_count = 0;
     }
     else if(input_char == USART_MOVE_SEL_NEXT_COMMAND)

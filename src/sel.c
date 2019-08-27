@@ -112,6 +112,13 @@ void sel_move_next_init()
     printf("start sel move next\n");
 }
 
+void sel_disable()
+{
+    steppers_disable_sel();
+    target_index = 0;
+    printf("disabled selector\n");
+}
+
 /*
  * IR sensor rising/falling edge interrupt. Contains most of the logic for homing and moving to position.
  *

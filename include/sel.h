@@ -19,6 +19,7 @@ void sel_set_max_index(uint8_t num_tubes);
 void sel_home_init(void);
 void sel_move_init(uint8_t destination_index);
 void sel_move_next_init(void);
+void sel_disable(void);
 
 extern volatile uint8_t sel_index;
 extern volatile uint8_t sel_move_after_dis_home[2];
