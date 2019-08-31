@@ -25,6 +25,7 @@
 
 void usart_init(void);
 void usart_putchar(char c, FILE *stream);
+void usart_check_execute(void);
 void usart_parse_command(char input_char);
 
 #endif

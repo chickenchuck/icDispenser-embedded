@@ -2,6 +2,7 @@
 #include "steppers.h"
 #include "sel.h"
 #include "dis.h"
+#include "queue.h"
 
 volatile char command[USART_ARG_LENGTH+1]; //stores characters for commands that require an argument
 volatile char char_count = 0; //for keeping track of how many characters have been sent and are stored in the command array
@@ -43,6 +44,14 @@ void usart_putchar(char c, FILE *stream)
 
     loop_until_bit_is_set(UCSR0A, UDRE0);
     UDR0 = c;
+}
+
+void usart_check_execute()
+{
+    if(!queue_is_empty())
+    {
+        usart_parse_command(queue_pop());
+    }
 }
 
 /* 
@@ -138,5 +147,9 @@ void usart_parse_command(char input_char)
  */
 ISR(USART_RX_vect)
 {
-    usart_parse_command(UDR0);
+    if(!queue_is_full())
+        queue_push(UDR0);
+    else
+        printf("queue overflow\n");
 }
+

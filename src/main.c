@@ -26,10 +26,11 @@ int main()
 
     while(1)
     {
-        if(dis_is_dispense == 1)
+        usart_check_execute();
+        /*if(dis_is_dispense == 1)
         {
             dis_wait_for_dispense();
-        }
+        }*/
         //printf("%i\n", dis_ir_get());
     }
 
