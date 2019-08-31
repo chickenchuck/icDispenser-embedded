@@ -147,9 +147,11 @@ void usart_parse_command(char input_char)
  */
 ISR(USART_RX_vect)
 {
+    cli();
     if(!queue_is_full())
         queue_push(UDR0);
     else
         printf("queue overflow\n");
+    sei();
 }
 
