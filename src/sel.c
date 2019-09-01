@@ -54,7 +54,7 @@ void sel_print_index()
  */
 uint8_t sel_move_check_dis(uint8_t caller, uint8_t arg)
 {
-    if(is_dis_homed == 1)
+    if(is_dis_homed)
         return 1;
     else
     {
@@ -102,7 +102,7 @@ void sel_move_init(uint8_t destination_index)
 
         printf("start sel move i%i t%i\n", sel_index, target_index);
 
-        if(home_before_next_move == 1)
+        if(home_before_next_move)
             sel_home_init();
         else
         {
@@ -152,11 +152,11 @@ ISR(INT1_vect)
         if(SEL_IR_PIN_REG & (1 << SEL_IR_PIN)) //pin is high = rising edge = nub exits the IR detector
         {
             //homing logic
-            if(is_homing == 1 && has_found_home_edge == 1)
+            if(is_homing && has_found_home_edge)
             {
                 has_found_home_edge = 0;
 
-                if(is_pos_counting == 0)
+                if(!is_pos_counting)
                 {   //home had been found because position counter is not counting anymore
                     is_homing = 0;
                     is_pos_counting = 0;
@@ -164,7 +164,7 @@ ISR(INT1_vect)
                     steppers_hold_sel();
                     printf("done homing selector\n");
 
-                    if(home_before_next_move == 1)
+                    if(home_before_next_move)
                     {
                         home_before_next_move = 0;
                         if(sel_index != target_index)
@@ -184,11 +184,11 @@ ISR(INT1_vect)
                 }
             }
             //move to index logic
-            else if(has_found_target == 1)
+            else if(has_found_target)
             {
                 steppers_hold_sel();
 
-                if(is_move_next_mode == 1)
+                if(is_move_next_mode)
                     printf("done (next)\n");
                 else //normal operation
                     printf("done moving to index\n");
@@ -197,7 +197,7 @@ ISR(INT1_vect)
         else //pin is low = falling edge = nub enters the IR detector
         {
             //homing logic
-            if(is_homing == 1)
+            if(is_homing)
             {
                 has_found_home_edge = 1;
                 steppers_move_sel(SEL_HOME_SPEED_SLOW, SEL_DIR); //slow down
@@ -207,7 +207,7 @@ ISR(INT1_vect)
                 is_pos_counting = 1;
             }
             //move to next index logic
-            else if(is_move_next_mode == 1)
+            else if(is_move_next_mode)
             {
                 has_found_target = 1;
                 steppers_move_sel(SEL_MOVE_SPEED_SLOW, SEL_DIR); //slow down
@@ -249,7 +249,7 @@ ISR(INT1_vect)
  */
 ISR(TIMER0_OVF_vect)
 {
-    if(is_pos_counting == 1)
+    if(is_pos_counting)
     {
         pos_count++;
 

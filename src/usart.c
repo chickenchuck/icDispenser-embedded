@@ -102,7 +102,7 @@ void usart_rx_parse_cmd()
     else
         is_cmd_valid = 0;
 
-    if(is_cmd_valid == 1)
+    if(is_cmd_valid)
     {
         printf("r\n");
         cmd_func();
@@ -138,7 +138,7 @@ void usart_rx_parse_cmd_arg()
     else
         is_cmd_valid = 0;
 
-    if(is_cmd_valid == 1)
+    if(is_cmd_valid)
     {
         printf("r\n");
         cmd_func(arg);

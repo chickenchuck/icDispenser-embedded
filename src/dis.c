@@ -82,7 +82,7 @@ void dis_dispense_no_home_init(uint8_t num_items)
  */
 void dis_home_init()
 {
-    if(is_dis_homed == 0)
+    if(!is_dis_homed)
     {
         is_dis_homing = 1;
         steppers_move_dis(DIS_HOME_SPEED, DIS_HOME_DIR);
@@ -107,7 +107,7 @@ void dis_wait_for_dispense()
             dis_done();
             printf("error: dispenser went too far!\n");
         }
-        if(dis_is_dispense == 0)
+        if(!dis_is_dispense)
         {
             printf("wait_for_dispense exited\n");
             return;
@@ -137,7 +137,7 @@ void dis_wait_for_stable()
         
         //printf("dis_stable: %i\n", data);
 
-        if(dis_is_dispense == 0)
+        if(!dis_is_dispense)
         {
             printf("wait_for_stable exited\n");
             return;
@@ -157,7 +157,7 @@ void dis_done()
 
     printf("done dispensing\n");
 
-    if(is_dispense_no_home == 0)
+    if(!is_dispense_no_home)
         dis_home_init();
 
     is_dispense_no_home = 0;
@@ -171,7 +171,7 @@ ISR(INT0_vect)
 {
     if(DIS_LS_PIN_REG & (1 << DIS_LS_PIN)) //pin is high = rising edge of signal = switch is unpressed
     {
-        if(is_dis_homing == 1)
+        if(is_dis_homing)
         {
             steppers_disable_dis();
             is_dis_homing = 0;
