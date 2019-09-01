@@ -1,6 +1,7 @@
 #include "dis.h"
 #include "sel.h"
 #include "steppers.h"
+#include "usart.h"
 
 volatile uint8_t dis_is_dispense = 0;
 volatile uint8_t is_dispense_no_home = 0;
@@ -101,6 +102,7 @@ void dis_wait_for_dispense()
 {
     while(dis_ir_get() == DIS_IR_UNBROKEN)
     {
+        usart_rx_check_queue();
         if(dispense_pos >= DIS_TOO_FAR_POS)
         {
             steppers_disable_dis();
@@ -130,6 +132,7 @@ void dis_wait_for_stable()
 
     while(stable_count < DIS_IR_STABLE_NUM)
     {
+        usart_rx_check_queue();
         if(dis_ir_get() == DIS_IR_UNBROKEN)
             stable_count++;
         else

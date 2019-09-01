@@ -27,10 +27,10 @@ int main()
     while(1)
     {
         usart_rx_check_queue();
-        /*if(dis_is_dispense == 1)
+        if(dis_is_dispense == 1)
         {
             dis_wait_for_dispense();
-        }*/
+        }
         //printf("%i\n", dis_ir_get());
     }
 
