@@ -67,6 +67,7 @@ void usart_rx_add_char_to_cmd(char c)
         else
             usart_rx_parse_cmd_arg();
         cmd_len = 0;
+        memset(&cmd[0], 0, sizeof(cmd));
     }
 }
 
@@ -104,7 +105,7 @@ void usart_rx_parse_cmd()
 
     if(is_cmd_valid)
     {
-        printf("r\n");
+        printf("r: %c\n", cmd[0]);
         cmd_func();
     }
     else
@@ -140,7 +141,7 @@ void usart_rx_parse_cmd_arg()
 
     if(is_cmd_valid)
     {
-        printf("r\n");
+        printf("r: %s\n", cmd);
         cmd_func(arg);
     }
     else
