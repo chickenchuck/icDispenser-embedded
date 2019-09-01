@@ -16,6 +16,8 @@
 #define DIS_TOO_FAR_POS 210000UL
 
 void dis_init(void);
+void dis_hold(void);
+void dis_disable(void);
 void dis_dispense_init(uint8_t num_items);
 void dis_dispense_no_home_init(uint8_t num_items);
 void dis_home_init(void);

@@ -38,6 +38,19 @@ void dis_init()
     DIS_IR_PORT |= (1 << DIS_IR_PIN);
 }
 
+void dis_hold()
+{
+    steppers_hold_dis();
+    printf("enabled dispenser\n");
+}
+
+void dis_disable()
+{
+    steppers_disable_dis();
+    dis_is_dispense = 0;
+    printf("disabled dispenser\n");
+}
+
 /*
  * Initializes a dispense operation
  * num_items - number of ICs to dispense

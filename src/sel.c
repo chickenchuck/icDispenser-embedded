@@ -31,6 +31,19 @@ void sel_ir_init()
     EIMSK |= (1 << INT1);
 }
 
+void sel_hold()
+{
+    steppers_hold_sel();
+    printf("enabled selector\n");
+}
+
+void sel_disable()
+{
+    steppers_disable_sel();
+    target_index = 0;
+    printf("disabled selector\n");
+}
+
 /*
  * Checks if dispenser is homed, and sets it to home and go back to what sel was doing after it homes
  */
@@ -110,13 +123,6 @@ void sel_move_next_init()
     is_move_next_mode = 1;
     steppers_move_sel(SEL_MOVE_SPEED, SEL_DIR);
     printf("start sel move next\n");
-}
-
-void sel_disable()
-{
-    steppers_disable_sel();
-    target_index = 0;
-    printf("disabled selector\n");
 }
 
 /*
