@@ -6,7 +6,7 @@ volatile uint8_t dis_is_dispense = 0;
 volatile uint8_t is_dispense_no_home = 0;
 volatile uint8_t is_dis_homing = 0;
 volatile uint8_t is_dis_homed = 0;
-volatile uint8_t items_left_to_dispense = 0;
+volatile uint16_t items_left_to_dispense = 0;
 volatile uint64_t dispense_pos = 0;
 
 void dis_init()
@@ -55,7 +55,7 @@ void dis_disable()
  * Initializes a dispense operation
  * num_items - number of ICs to dispense
  */
-void dis_dispense_init(uint8_t num_items)
+void dis_dispense_init(uint16_t num_items)
 {
     if(!(DIS_LS_PIN_REG & (1 << DIS_LS_PIN))) //pin is low = falling edge of signal = switch is pressed = not homed
         printf("error: dis not homed\n");
@@ -71,7 +71,7 @@ void dis_dispense_init(uint8_t num_items)
     }
 }
 
-void dis_dispense_no_home_init(uint8_t num_items)
+void dis_dispense_no_home_init(uint16_t num_items)
 {
     is_dispense_no_home = 1;
     dis_dispense_init(num_items);

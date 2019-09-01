@@ -114,14 +114,14 @@ void usart_rx_parse_cmd()
 void usart_rx_parse_cmd_arg()
 {
     uint8_t is_cmd_valid = 1;
-    void (*cmd_func)(uint8_t);
+    void (*cmd_func)(uint16_t);
 
-    uint8_t arg = 0;
+    uint16_t arg = 0;
     uint8_t arg_len = cmd_len - 1;
     for(uint8_t i = 1; i <= arg_len; i++)
     {
         uint8_t exp_factor = arg_len - i;
-        uint8_t mul_factor = 1;
+        uint16_t mul_factor = 1;
         for(uint8_t j = 0; j < exp_factor; j++)
             mul_factor *= 10;
         arg += (cmd[i]-'0') * mul_factor;

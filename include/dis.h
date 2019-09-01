@@ -18,8 +18,8 @@
 void dis_init(void);
 void dis_hold(void);
 void dis_disable(void);
-void dis_dispense_init(uint8_t num_items);
-void dis_dispense_no_home_init(uint8_t num_items);
+void dis_dispense_init(uint16_t num_items);
+void dis_dispense_no_home_init(uint16_t num_items);
 void dis_home_init(void);
 uint8_t dis_ir_get(void);
 void dis_wait_for_dispense(void);

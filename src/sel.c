@@ -2,9 +2,9 @@
 #include "dis.h"
 #include "steppers.h"
 
-volatile uint8_t sel_index = 0;
-volatile uint8_t target_index = 0;
-volatile uint8_t max_index = 5; //total tubes - 1
+volatile uint16_t sel_index = 0;
+volatile uint16_t target_index = 0;
+volatile uint16_t max_index = 5; //total tubes - 1
 volatile uint8_t is_move_next_mode = 0; //is the selector in a move_next operation
 volatile uint8_t has_found_target = 0;
 
@@ -69,7 +69,7 @@ uint8_t sel_move_check_dis(uint8_t caller, uint8_t arg)
 /*
  * Sets the maximum index based on the total number of tubes
  */
-void sel_set_max_index(uint8_t num_tubes)
+void sel_set_max_index(uint16_t num_tubes)
 {
     max_index = num_tubes - 1;
     printf("total tubes set to: %i\n", num_tubes);
@@ -92,7 +92,7 @@ void sel_home_init()
  *
  * destination_index - index to move to
  */
-void sel_move_init(uint8_t destination_index)
+void sel_move_init(uint16_t destination_index)
 {
     if(sel_move_check_dis(2, destination_index) == 1)
     {
