@@ -16,6 +16,7 @@
 void sel_ir_init(void);
 void sel_hold(void);
 void sel_disable(void);
+void sel_print_index(void);
 uint8_t sel_move_check_dis(uint8_t caller, uint8_t arg);
 void sel_set_max_index(uint8_t num_tubes);
 void sel_home_init(void);

@@ -44,6 +44,11 @@ void sel_disable()
     printf("disabled selector\n");
 }
 
+void sel_print_index()
+{
+    printf("sel index: %i\n", sel_index); 
+}
+
 /*
  * Checks if dispenser is homed, and sets it to home and go back to what sel was doing after it homes
  */
