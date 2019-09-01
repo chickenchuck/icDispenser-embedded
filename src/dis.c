@@ -67,7 +67,7 @@ void dis_dispense_init(uint8_t num_items)
         dispense_pos = 0;
         dis_is_dispense = 1;
         steppers_move_dis(DIS_SPEED, DIS_DIR);
-        printf("dispense start\n");
+        printf("dispense start, %i items\n", num_items);
     }
 }
 
