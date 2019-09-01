@@ -17,7 +17,7 @@ int main()
     dis_init();
 
     //setup serial output as stream and direct to stdout
-    FILE usart_output = FDEV_SETUP_STREAM(usart_putchar, NULL, _FDEV_SETUP_WRITE);
+    FILE usart_output = FDEV_SETUP_STREAM(usart_tx_putchar, NULL, _FDEV_SETUP_WRITE);
     stdout = &usart_output;
     
     sei();
@@ -26,7 +26,7 @@ int main()
 
     while(1)
     {
-        usart_check_execute();
+        usart_rx_check_queue();
         /*if(dis_is_dispense == 1)
         {
             dis_wait_for_dispense();

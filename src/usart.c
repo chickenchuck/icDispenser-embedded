@@ -1,11 +1,10 @@
 #include "usart.h"
-#include "steppers.h"
 #include "sel.h"
 #include "dis.h"
 #include "queue.h"
 
-volatile char command[USART_ARG_LENGTH+1]; //stores characters for commands that require an argument
-volatile char char_count = 0; //for keeping track of how many characters have been sent and are stored in the command array
+char cmd[USART_CMD_BUFFER_LENGTH];
+uint8_t cmd_len = 0;
 
 void usart_init()
 {
@@ -37,20 +36,31 @@ void usart_init()
  * After pushing a char, it waits for the char to leave the buffer (reg UDR0) by reading the UCSR0A flag before
  * sending the next one.
 */
-void usart_putchar(char c, FILE *stream)
+void usart_tx_putchar(char c, FILE *stream)
 {
     if(c == '\n')
-        usart_putchar('\r', stream);
+        usart_tx_putchar('\r', stream);
 
     loop_until_bit_is_set(UCSR0A, UDRE0);
     UDR0 = c;
 }
 
-void usart_check_execute()
+void usart_rx_check_queue()
 {
     if(!queue_is_empty())
+        usart_rx_add_char_to_cmd(queue_pop());
+}
+
+void usart_rx_add_char_to_cmd(char c)
+{
+    if(c != '\n')
     {
-        usart_parse_command(queue_pop());
+        cmd[cmd_len++] = c;
+    }
+    else if(cmd_len > 0)
+    {
+        usart_rx_parse_cmd();
+        cmd_len = 0;
     }
 }
 
@@ -62,84 +72,62 @@ void usart_check_execute()
  * Argumental commands use the command[] array to store characters and char_count to keep track of how many
  * characters it read. It executes the command only after a full argument is received
  */
-void usart_parse_command(char input_char)
+void usart_rx_parse_cmd()
 {
-    //check if the command is one that needs an argument
-    if(input_char == USART_MOVE_SEL_COMMAND || input_char == USART_TOTAL_TUBES_COMMAND ||
-            input_char == USART_DISPENSE_COMMAND || input_char == USART_DISPENSE_NO_HOME_COMMAND)
+    uint8_t is_cmd_valid = 1;
+
+    if(cmd_len == 1)
     {
-        command[0] = input_char;
-        char_count = 1;
+        if(cmd[0] == USART_HOME_SEL_COMMAND)
+            sel_home_init();
+        else if(cmd[0] == USART_HOLD_SEL_COMMAND)
+            sel_hold();
+        else if(cmd[0] == USART_DISABLE_SEL_COMMAND)
+            sel_disable();
+        else if(cmd[0] == USART_MOVE_SEL_NEXT_COMMAND)
+            sel_move_next_init();
+        else if(cmd[0] == USART_HOME_DIS_COMMAND)
+            dis_home_init();
+        else if(cmd[0] == USART_HOLD_DIS_COMMAND)
+            dis_hold();
+        else if(cmd[0] == USART_DISABLE_DIS_COMMAND)
+            dis_disable();
+        else if(cmd[0] == USART_GET_SEL_INDEX_COMMAND)
+            printf("sel index: %i\n", sel_index);
+        else
+            is_cmd_valid = 0;
     }
-    else if(input_char == USART_HOME_SEL_COMMAND)
+    else if(cmd_len > 1)
     {
-        sel_home_init();
-        char_count = 0;
-    }
-    else if(input_char == USART_ENABLE_SEL_COMMAND)
-    {
-        steppers_hold_sel();
-        printf("enabled selector\n");
-        char_count = 0;
-    }
-    else if(input_char == USART_DISABLE_SEL_COMMAND)
-    {
-        sel_disable();
-        char_count = 0;
-    }
-    else if(input_char == USART_MOVE_SEL_NEXT_COMMAND)
-    {
-        sel_move_next_init();
-        char_count = 0;
-    }
-    else if(input_char == USART_HOME_DIS_COMMAND)
-    {
-        dis_home_init();
-        char_count = 0;
-    }
-    else if(input_char == USART_ENABLE_DIS_COMMAND)
-    {
-        steppers_hold_dis();
-        printf("enabled dispenser\n");
-        char_count = 0;
-    }
-    else if(input_char == USART_DISABLE_DIS_COMMAND)
-    {
-        steppers_disable_dis();
-        dis_is_dispense = 0;
-        printf("disabled dispenser\n");
-        char_count = 0;
-    }
-    else if(input_char == USART_GET_SEL_INDEX_COMMAND)
-    {
-        printf("sel index: %i\n", sel_index);
-        char_count = 0;
+        uint8_t arg = 0;
+        uint8_t arg_len = cmd_len - 1;
+        for(uint8_t i = 1; i <= arg_len; i++)
+        {
+            uint8_t exp_factor = arg_len - i;
+            uint8_t mul_factor = 1;
+            for(uint8_t j = 0; j < exp_factor; j++)
+                mul_factor *= 10;
+            arg += (cmd[i]-'0') * mul_factor;
+        }
+
+        if(cmd[0] == USART_MOVE_SEL_COMMAND)
+            sel_move_init(arg);
+        else if(cmd[0] == USART_TOTAL_TUBES_COMMAND)
+            sel_set_max_index(arg);
+        else if(cmd[0] == USART_DISPENSE_COMMAND)
+            dis_dispense_init(arg);
+        else if(cmd[0] == USART_DISPENSE_NO_HOME_COMMAND)
+            dis_dispense_no_home_init(arg);
+        else
+            is_cmd_valid = 0;
     }
     else
-    {
-        if(char_count > 0 && char_count < USART_ARG_LENGTH + 1) //argument doesn't have enough characters yet
-        {
-            command[char_count] = input_char;
-            char_count++;
-        }
-        else if(char_count == USART_ARG_LENGTH + 1) //full command with argument found
-        {
-            //calculate the numerical value of the argument
-            unsigned long arg_value = ((command[1] - '0') * 100) + ((command[2] - '0') * 10) + (command[3] - '0');
+        is_cmd_valid = 0;
 
-            //do things based on the first letter (non-argument) of the command
-            if(command[0] == USART_MOVE_SEL_COMMAND)
-                sel_move_init(arg_value);
-            if(command[0] == USART_TOTAL_TUBES_COMMAND)
-                sel_set_max_index(arg_value);
-            if(command[0] == USART_DISPENSE_COMMAND)
-                dis_dispense_init(arg_value);
-            if(command[0] == USART_DISPENSE_NO_HOME_COMMAND)
-                dis_dispense_no_home_init(arg_value);
-
-            char_count = 0;
-        }
-    }
+    if(is_cmd_valid == 1)
+        printf("r\n");
+    else
+        printf("invalid cmd\n");
 }
 
 /*
