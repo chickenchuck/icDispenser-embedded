@@ -11,7 +11,6 @@ volatile uint8_t has_found_target = 0;
 volatile uint8_t is_homing = 0;
 volatile uint8_t has_found_home = 0;
 volatile uint8_t has_found_home_edge = 0;
-volatile uint8_t is_first_home = 0;
 volatile uint8_t home_before_next_move = 0;
 volatile uint8_t sel_move_after_dis_home[2] = {0, 0};
 
@@ -175,7 +174,6 @@ ISR(INT1_vect)
                             printf("done moving to index\n");
                         }
                     } 
-                    is_first_home = 0;
                 }
                 else
                 {
