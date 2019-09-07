@@ -1,3 +1,5 @@
+//queue.h - array instance of a queue used for received sreial commands
+
 #include "queue.h"
 
 volatile char queue_array[MAX];

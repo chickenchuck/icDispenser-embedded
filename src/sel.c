@@ -1,3 +1,5 @@
+//sel.c - tube selector functionality
+
 #include "sel.h"
 #include "dis.h"
 #include "steppers.h"
@@ -74,6 +76,9 @@ void sel_set_max_index(uint16_t num_tubes)
     printf("total tubes set to: %i\n", num_tubes);
 }
 
+/*
+ * Sets the selector to home
+ */
 void sel_home_init()
 {
     if(sel_move_check_dis(1, 0) == 1)
@@ -88,7 +93,6 @@ void sel_home_init()
 /*
  * Sets the selector to move to a specified index. Checks to see if it must home beforehand due to the index changing
  * arbitrarily (ir sensor detection)
- *
  * destination_index - index to move to
  */
 void sel_move_init(uint16_t destination_index)
@@ -134,12 +138,12 @@ void sel_move_next_init()
  *
  * How homing works: It determines which index is home based on how long the nub is on the chainChip that is
  * detected by the IR sensor. The longer nub represents home. The stepper is turned on initially and some variables
- * are set by the homeInit function when the command is parsed. Every time a rising edge on the IR detector occurs,
+ * are set by the sel_home_init function. Every time a rising edge on the IR detector occurs,
  * the position counter is initialized and the motor is slowed down. When the switch is released the state of the
  * position counter is checked: if it is still on, it has not hit the threshold so that index is not home. If it is 
  * turned off it has finished counting, meaning that index is home.
  *
- * How move to position works: The moveToPosInit function initializes and starts the motor. If a rising edge on the
+ * How move to position works: The sel_move_init function initializes and starts the motor. If a rising edge on the
  * IR detector occurs it updates the index and checks if it is at its destination. If it is, it slows the motor down
  * so it can stop more accurately. If a falling edge on the IR detector occurs, it checks if it is at its
  * destination. If it is, it stops the motor.
@@ -243,8 +247,7 @@ ISR(INT1_vect)
 }
 
 /*
- * TIMER0 overflow interrupt. Used for counting motor steps for selector homing. This interrupt is run every time
- * TIMER0 overflows, indicating the motor moved one microstep. The microsteps are counted until it hits a threshold
+ * TIMER0 overflow interrupt. Used for counting motor steps for selector homing. Is run every time the motor moves one * microstep. The microsteps are counted until it hits a threshold
  * value.
  */
 ISR(TIMER0_OVF_vect)

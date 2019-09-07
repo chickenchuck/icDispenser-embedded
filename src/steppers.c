@@ -1,3 +1,5 @@
+//steppers.c - low-level stepper motor control
+
 #include "steppers.h"
 
 //motor states: 0=disabled, 1=hold, 2=moving

@@ -1,3 +1,5 @@
+//usart.c - serial tx, rx parsing
+
 #include "usart.h"
 #include "sel.h"
 #include "dis.h"
@@ -45,41 +47,56 @@ void usart_tx_putchar(char c, FILE *stream)
     UDR0 = c;
 }
 
+/*
+ * Checks the serial queue. Starts command parsing in queue if not empty.
+ */
 void usart_rx_check_queue()
 {
     if(!queue_is_empty())
         usart_rx_add_char_to_cmd(queue_pop());
 }
 
+/*
+ * Adds char to current command being parsed. Adds char to cmd array; terminates commands with when it gets a
+ * newline. Commands without an argument are one capital letter. Commands with an argument are a capital letter
+ * followed by a number. The entire command length must be <= USART_CMD_BUFFER_LENGTH
+ */
 void usart_rx_add_char_to_cmd(char c)
 {
-    if(c != '\n')
+    if(c != '\n') //add normal char
     {
         if(cmd_len >= USART_CMD_BUFFER_LENGTH)
             printf("error: command too long!\n");
         else
             cmd[cmd_len++] = c;
     }
-    else if(cmd_len > 0)
+    else if(cmd_len > 0) //newline is received; terminate command and execute
     {
         if(cmd_len == 1)
-            usart_rx_parse_cmd();
+            usart_rx_execute_cmd();
         else
-            usart_rx_parse_cmd_arg();
+            usart_rx_execute_cmd_with_arg();
         cmd_len = 0;
-        memset(&cmd[0], 0, sizeof(cmd));
+
+        memset(&cmd[0], 0, sizeof(cmd)); //clear cmd array
     }
 }
 
 /* 
- * Parses and interprets serial commands.
+ * interprets serial commands.
  * Some commands have arguments, others don't
  *
  * Non-argumental commands just do the specified operation after the one character is read
  * Argumental commands use the command[] array to store characters and char_count to keep track of how many
  * characters it read. It executes the command only after a full argument is received
  */
-void usart_rx_parse_cmd()
+
+/*
+ * Executes serial commands that don't have an argument (single char). Creates a function pointer, then assigns the
+ * pointer to the function the command should call. If the command char is not a known command, it says it is
+ * invalid. Calls cmd_func at the end if command is valid.
+ */
+void usart_rx_execute_cmd()
 {
     uint8_t is_cmd_valid = 1;
     void (*cmd_func)(void);
@@ -112,13 +129,19 @@ void usart_rx_parse_cmd()
         printf("invalid command\n");
 }
 
-void usart_rx_parse_cmd_arg()
+/*
+ * Works the same ways as usart_rx_execute_cmd, but calculates the arg first. It converts the chars representing the
+ * digits of the arg to an integer
+ */
+void usart_rx_execute_cmd_with_arg()
 {
     uint8_t is_cmd_valid = 1;
     void (*cmd_func)(uint16_t);
 
     uint16_t arg = 0;
     uint8_t arg_len = cmd_len - 1;
+
+    //Does place value math on each arg char, and adds to arg int
     for(uint8_t i = 1; i <= arg_len; i++)
     {
         uint8_t exp_factor = arg_len - i;
@@ -149,7 +172,7 @@ void usart_rx_parse_cmd_arg()
 }
 
 /*
- * Serial receive interrupt
+ * Serial receive interrupt. Pushes chars to queue if not full. Indicates queue overflows.
  */
 ISR(USART_RX_vect)
 {

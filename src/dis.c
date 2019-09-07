@@ -1,3 +1,5 @@
+//dis.c - dispensing functionality
+
 #include "dis.h"
 #include "sel.h"
 #include "steppers.h"
@@ -31,8 +33,7 @@ void dis_init()
     else
         is_dis_homed = 0;
 
-
-    //set ir pin as input, PCINT2 pin (external interrupt)
+    //set ir pin as input
     DIS_IR_DDR &= ~(1 << DIS_IR_PIN);
 
     //turn on internal pullup for ir
@@ -99,6 +100,10 @@ uint8_t dis_ir_get()
     return DIS_IR_PIN_REG & (1 << DIS_IR_PIN);
 }
 
+/*
+ * Loops until dispenser ir beam is broken. While looping checks command queue, checks if dispenser went too far,
+ * and if dis_is_dispense is low (another routine changed it to disable dispense)
+ */
 void dis_wait_for_dispense()
 {
     while(dis_ir_get() == DIS_IR_UNBROKEN)
@@ -127,6 +132,10 @@ void dis_wait_for_dispense()
         dis_wait_for_stable();
 }
 
+/*
+ * Loops, checking ir beam state and counts until beam is unbroken for DIS_IR_STABLE_NUM times. While looping, checks
+ * serial queue and dis_is_dispense
+ */
 void dis_wait_for_stable()
 {
     uint8_t stable_count = 0;
@@ -154,6 +163,7 @@ void dis_wait_for_stable()
     dis_wait_for_dispense();
 }
 
+//Resets things after dispense operation is done
 void dis_done()
 {
     dis_is_dispense = 0;
@@ -174,6 +184,7 @@ void dis_done()
  */
 ISR(INT0_vect)
 {
+    //only done homing when switch is unpressed
     if(DIS_LS_PIN_REG & (1 << DIS_LS_PIN)) //pin is high = rising edge of signal = switch is unpressed
     {
         if(is_dis_homing)
@@ -183,6 +194,7 @@ ISR(INT0_vect)
             is_dis_homed = 1;
             printf("done homing dispenser\n");
 
+            //set sel to home or move if dis was homed in preparation for sel moving
             if(sel_move_after_dis_home[0] == 1)
                 sel_home_init();
             else if(sel_move_after_dis_home[0] == 2)
@@ -192,10 +204,12 @@ ISR(INT0_vect)
     }
     else //pin is low = falling edge of signal = switch is pressed
     {
+        printf("disswitch pressed\n");
         is_dis_homed = 0;
     }
 }
 
+// Timer2 overflow interrupt. Counts dispenser position for checking if the dispenser went too far.
 ISR(TIMER2_OVF_vect)
 {
     cli();
