@@ -5,6 +5,7 @@
 #include <avr/interrupt.h>
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 
 #define BAUD 9600
 #include <util/setbaud.h>
