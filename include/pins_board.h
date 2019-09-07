@@ -41,9 +41,9 @@
 #define DIS_IR_PORT PORTC
 #define DIS_IR_PIN PC3
 
-#define USART_LED_DDR DDRC
-#define USART_LED_PORT PORTC
-#define USART_LED_PIN PC0
+#define LED_DDR DDRC
+#define LED_PORT PORTC
+#define LED_PIN PC0
 
 #endif
 

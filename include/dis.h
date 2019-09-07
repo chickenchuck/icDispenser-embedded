@@ -1,7 +1,7 @@
 #ifndef DIS_H
 #define DIS_H
 
-#include "pins.h"
+#include "pins_board.h"
 #include <avr/interrupt.h>
 #include <stdio.h>
 #include <stdlib.h>

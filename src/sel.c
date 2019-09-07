@@ -21,6 +21,16 @@ volatile uint16_t pos_count = 0;
 
 void sel_ir_init()
 {
+    //set ir sensor pin as input, PCINT10 pin (external interrupt)
+    SEL_IR_DDR &= ~(1 << SEL_IR_PIN);
+
+    //enable PCINT[14:8] (we only use PCINT10)
+    PCICR |= (1 << PCIE1);
+
+    //enable PCINT10 on pin
+    PCMSK1 |= (1 << PCINT10);
+
+    /* OLD PINOUT
     //set ir sensor pin as input, INT1 pin (external interrupt)
     SEL_IR_DDR &= ~(1 << SEL_IR_PIN);
 
@@ -30,6 +40,7 @@ void sel_ir_init()
 
     //enable INT1
     EIMSK |= (1 << INT1);
+    */
 }
 
 void sel_hold()
@@ -148,7 +159,7 @@ void sel_move_next_init()
  * so it can stop more accurately. If a falling edge on the IR detector occurs, it checks if it is at its
  * destination. If it is, it stops the motor.
  */
-ISR(INT1_vect)
+ISR(PCINT1_vect)
 {
     if(steppers_sel_state == 2) //motor is moving
     {

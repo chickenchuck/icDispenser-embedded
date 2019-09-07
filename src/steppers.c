@@ -20,12 +20,12 @@ void steppers_init()
     STEPPERS_SEL_EN_PORT |= (1 << STEPPERS_SEL_EN_PIN);
     STEPPERS_DIS_EN_PORT |= (1 << STEPPERS_DIS_EN_PIN);
 
-    //set timer compare output mode to toggle PWM pins on compare match
-    TCCR0A &= ~(1 << COM0A1);
-    TCCR0A |= (1 << COM0A0);
+    //set timer compare output mode to change PWM output pin when timer overflows
+    TCCR0A |= (1 << COM0A1);
+    TCCR0A &= ~(1 << COM0A0);
 
-    TCCR2A &= ~(1 << COM2A1);
-    TCCR2A |= (1 << COM2A0);
+    TCCR2A |= (1 << COM2B1);
+    TCCR2A &= ~(1 << COM2B0);
 
     //set timer mode to phase correct PWM
     TCCR0B |= (1 << WGM02);
