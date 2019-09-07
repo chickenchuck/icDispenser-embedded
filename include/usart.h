@@ -28,8 +28,8 @@ void usart_init(void);
 void usart_tx_putchar(char c, FILE *stream);
 void usart_rx_check_queue(void);
 void usart_rx_add_char_to_cmd(char c);
-void usart_rx_parse_cmd(void);
-void usart_rx_parse_cmd_arg(void);
+void usart_rx_execute_cmd(void);
+void usart_rx_execute_cmd_with_arg(void);
 
 #endif
 
