@@ -67,6 +67,7 @@ void dis_dispense_init(uint16_t num_items)
         items_left_to_dispense = num_items;
         dispense_pos = 0;
         dis_is_dispense = 1;
+        TIMSK2 |= (1 << TOIE2); //enable overflow interrupt for timer2, for counting steps
         steppers_move_dis(DIS_SPEED, DIS_DIR);
         printf("dispense start, %i items\n", num_items);
     }
@@ -157,6 +158,7 @@ void dis_done()
 {
     dis_is_dispense = 0;
     is_dis_homed = 0;
+    TIMSK2 &= ~(1 << TOIE2); //disable overflow interrupt for timer2
 
     printf("done dispensing\n");
 

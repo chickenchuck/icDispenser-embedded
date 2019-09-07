@@ -154,6 +154,7 @@ ISR(INT1_vect)
             if(is_homing && has_found_home_edge)
             {
                 has_found_home_edge = 0;
+                TIMSK0 &= ~(1 << TOIE0); //disable overflow interrupt for timer0 to stop position counting
 
                 if(!is_pos_counting)
                 {   //home had been found because position counter is not counting anymore
@@ -198,6 +199,7 @@ ISR(INT1_vect)
             if(is_homing)
             {
                 has_found_home_edge = 1;
+                TIMSK0 |= (1 << TOIE0); //enable overflow interrupt for timer0, for position counting
                 steppers_move_sel(SEL_HOME_SPEED_SLOW, SEL_DIR); //slow down
 
                 //reset and enable position counting
@@ -247,12 +249,10 @@ ISR(INT1_vect)
  */
 ISR(TIMER0_OVF_vect)
 {
-    if(is_pos_counting)
-    {
-        pos_count++;
-
-        if(pos_count == SEL_HOME_POS_COUNT_THRESHOLD) //have we hit the threshold
-            is_pos_counting = 0; //turn off position counting
-    }
+    cli();
+    pos_count++;
+    if(pos_count >= SEL_HOME_POS_COUNT_THRESHOLD) //have we hit the threshold
+        is_pos_counting = 0; //turn off position counting
+    sei();
 }
 
