@@ -6,14 +6,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DIS_SPEED 50
-#define DIS_HOME_SPEED 30
+#define DIS_SPEED 100 //50
+#define DIS_HOME_SPEED 30 //30
 #define DIS_DIR 0
 #define DIS_HOME_DIR 1
 #define DIS_IR_BROKEN 0
 #define DIS_IR_UNBROKEN 8
 #define DIS_IR_STABLE_NUM 100
-#define DIS_TOO_FAR_POS 210000UL
+#define DIS_TOO_FAR_POS 100000UL //210,000
 
 void dis_init(void);
 void dis_hold(void);

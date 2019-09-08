@@ -5,13 +5,13 @@
 #include <avr/interrupt.h>
 #include <stdio.h>
 
-#define SEL_MOVE_SPEED 100 //165
-#define SEL_MOVE_SPEED_SLOW 250
-#define SEL_HOME_SPEED 120 //180
-#define SEL_HOME_SPEED_SLOW 250
+#define SEL_MOVE_SPEED 100 //25, 100, 165
+#define SEL_MOVE_SPEED_SLOW 120 //60, 250
+#define SEL_HOME_SPEED 120 //30, 120, 180
+#define SEL_HOME_SPEED_SLOW 250 //60, 250
 
 #define SEL_DIR 1
-#define SEL_HOME_POS_COUNT_THRESHOLD 700 //minimum number of microsteps for how long the IR sensor detects for homing
+#define SEL_HOME_POS_COUNT_THRESHOLD 700 //700, minimum number of microsteps for how long the IR sensor detects for homing
 
 void sel_ir_init(void);
 void sel_hold(void);

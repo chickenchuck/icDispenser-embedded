@@ -20,14 +20,15 @@ void steppers_init()
     STEPPERS_SEL_EN_PORT |= (1 << STEPPERS_SEL_EN_PIN);
     STEPPERS_DIS_EN_PORT |= (1 << STEPPERS_DIS_EN_PIN);
 
-    //set timer compare output mode to change PWM output pin when timer overflows
-    TCCR0A |= (1 << COM0A1);
-    TCCR0A &= ~(1 << COM0A0);
-
+    //for timer0 (sel), set timer compare output mode to toggle PWM output pin
+    TCCR0A &= ~(1 << COM0A1);
+    TCCR0A |= (1 << COM0A0);
+    
+    //for timer2 (dis), set timer compare output mode to clear when upcounting and set when downcounting
     TCCR2A |= (1 << COM2B1);
     TCCR2A &= ~(1 << COM2B0);
-
-    //set timer mode to phase correct PWM
+    
+    //for both timers, set timer mode to phase correct PWM
     TCCR0B |= (1 << WGM02);
     TCCR0A &= ~(1 << WGM01);
     TCCR0A |= (1 << WGM00);
@@ -122,6 +123,7 @@ void steppers_move_dis(uint8_t speed, uint8_t dir)
 
     //set TOP value for output compare to generate PWM signal
     OCR2A = speed;
+    OCR2B = speed/2;
 
     //set timer clock select, 8x prescaling, starting the movement
     TCCR2B &= ~(1 << CS22);
@@ -162,4 +164,5 @@ void steppers_disable_dis()
 
     steppers_dis_state = 0;
 }
+
 
