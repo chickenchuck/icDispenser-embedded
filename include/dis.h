@@ -11,7 +11,7 @@
 #define DIS_DIR 0
 #define DIS_HOME_DIR 1
 #define DIS_IR_BROKEN 0
-#define DIS_IR_UNBROKEN 4
+#define DIS_IR_UNBROKEN 8
 #define DIS_IR_STABLE_NUM 100
 #define DIS_TOO_FAR_POS 210000UL
 
