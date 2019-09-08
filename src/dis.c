@@ -43,6 +43,7 @@ void dis_init()
 void dis_hold()
 {
     steppers_hold_dis();
+    dis_is_dispense = 0;
     printf("enabled dispenser\n");
 }
 
@@ -88,6 +89,7 @@ void dis_home_init()
     if(!is_dis_homed)
     {
         is_dis_homing = 1;
+        dis_is_dispense = 0;
         steppers_move_dis(DIS_HOME_SPEED, DIS_HOME_DIR);
         printf("dispenser homing\n");
     }
