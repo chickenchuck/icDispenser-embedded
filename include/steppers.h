@@ -1,7 +1,7 @@
 #ifndef STEPPERS_H
 #define STEPPERS_H
 
-#include "pins_board.h"
+#include "pins_pcb.h"
 
 void steppers_init(void);
 void steppers_move_sel(uint8_t speed, uint8_t dir);

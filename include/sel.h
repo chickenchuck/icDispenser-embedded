@@ -1,7 +1,7 @@
 #ifndef SEL_H
 #define SEL_H
 
-#include "pins_board.h"
+#include "pins_pcb.h"
 #include <avr/interrupt.h>
 #include <stdio.h>
 
